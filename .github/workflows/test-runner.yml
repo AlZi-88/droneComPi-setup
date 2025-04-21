@@ -6,7 +6,7 @@ on:
 
 jobs:
   echo-test:
-    runs-on: [self-hosted, raspi, infra, arm64]  # muss zu deinen Labels passen
+    runs-on: [self-hosted]  # must fit to the labels with which the runner was configured
     steps:
       - name: Say hello
         run: echo "Hello from compirunner :)"
