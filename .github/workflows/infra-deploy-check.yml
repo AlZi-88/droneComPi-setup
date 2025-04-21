@@ -1,0 +1,43 @@
+name: Provision and Test Target Pi
+
+on:
+  push:
+    branches:
+      - main
+      - infra/*
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Target Pi via Ansible
+    runs-on: [self-hosted, raspi, arm64]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run playbook to provision target
+        run: |
+          ansible-playbook ansible/playbook.yml
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
+
+  test:
+    name: Smoke Test ROS2 Interfaces
+    runs-on: 
+      - self-hosted
+      - raspi
+      - arm64
+    needs: deploy
+
+    steps:
+      - name: Check PX4 Interfaces via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.TARGET_PI_IP }}
+          username: drone
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            source /opt/ros/humble/setup.bash
+            source /home/drone/px4_ros_com/install/setup.bash
+            ros2 interface list | grep px4_msgs/msg/VehicleStatus
