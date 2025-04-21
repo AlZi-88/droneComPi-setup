@@ -1,0 +1,6 @@
+all:
+  hosts:
+    drone:
+      ansible_host: compi
+      ansible_user: drone
+      ansible_ask_pass: true
