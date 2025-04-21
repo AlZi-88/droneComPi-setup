@@ -1,0 +1,12 @@
+# .github/workflows/test-runner.yml
+name: Test Local Runner
+
+on:
+  workflow_dispatch:  # manuell starten
+
+jobs:
+  echo-test:
+    runs-on: [self-hosted, raspi, infra, arm64]  # muss zu deinen Labels passen
+    steps:
+      - name: Say hello
+        run: echo "Hello from compirunner :)"
