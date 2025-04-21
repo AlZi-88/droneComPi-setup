@@ -1,0 +1,87 @@
+
+
+ - name: Enable UART in /boot/firmware/config.txt
+   lineinfile:
+     path: /boot/firmware/config.txt
+     regexp: '^enable_uart='
+     line: 'enable_uart=1'
+     state: present
+ 
+ - name: Disable serial console in cmdline.txt
+   replace:
+     path: /boot/firmware/cmdline.txt
+     regexp: 'console=serial0,115200'
+     replace: ''
+ 
+ - name: Install PX4 dependencies
+   apt:
+     name:
+       - python3-pip
+       - python3-yaml
+       - python3-empy
+       - python3-jinja2
+       - python3-toml
+       - python3-numpy
+       - python3-dev
+       - libtinyxml2-dev
+       - libeigen3-dev
+       - libboost-all-dev
+       - libopencv-dev
+     state: present
+     update_cache: yes
+ 
+ - name: Install Fast DDS dependencies
+   apt:
+     name:
+       - libfastrtps-dev
+       - libfoonathan-memory-dev
+     state: present
+ 
+ - name: Create directory for px4_ros_com
+   file:
+     path: /home/drone/px4_ros_com
+     state: directory
+     owner: drone
+     group: drone
+     mode: '0755'
+ 
+ - name: Clone PX4 ROS 2 Bridge (px4_ros_com)
+   git:
+     repo: 'https://github.com/PX4/px4_ros_com.git'
+     dest: /home/drone/px4_ros_com
+     version: main
+     update: no
+     force: no
+     clone: yes
+   become: yes
+   become_user: drone
+ 
+ - name: Clone PX4 msg definitions (px4_msgs)
+   git:
+     repo: 'https://github.com/PX4/px4_msgs.git'
+     dest: /home/drone/px4_ros_com/src/px4_msgs
+     version: main
+     update: no
+     force: no
+     clone: yes
+   become: yes
+   become_user: drone
+
+ - name: Build PX4 ROS 2 workspace
+   become: yes
+   become_user: drone
+   shell: |
+     source /opt/ros/humble/setup.bash
+     cd /home/drone/px4_ros_com
+     colcon build
+   args:
+     executable: /bin/bash
+
+ - name: Source built workspace in .bashrc
+   lineinfile:
+     path: /home/drone/.bashrc
+     line: "source /home/drone/px4_ros_com/install/setup.bash"
+     state: present
+     insertafter: EOF
+   become: yes
+   become_user: drone

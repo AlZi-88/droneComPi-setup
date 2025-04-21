@@ -1,0 +1,15 @@
+- name: Update system
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install general tools
+  apt:
+    name:
+      - git
+      - curl
+      - htop
+      - vim
+      - net-tools
+      - unzip
+    state: present
