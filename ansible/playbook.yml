@@ -2,31 +2,33 @@
   hosts: all
   become: yes
 
+  vars_prompt:
+    - name: "target_ip"
+      prompt: "Enter the IP address of the Target Raspberry Pi"
+
+    - name: "target_pass"
+      prompt: "Enter the password for the 'drone' user on the Target Pi"
+      private: yes
+
+  pre_tasks:
+    - name: Add target host dynamically
+      add_host:
+        name: target
+        ansible_host: "{{ target_ip }}"
+        ansible_user: drone
+        ansible_ssh_pass: "{{ target_pass }}"
+
+    - name: Ensure SSH key is copied to target
+      delegate_to: target
+      become: false
+      ansible.builtin.shell: |
+        mkdir -p ~/.ssh
+        echo "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}" >> ~/.ssh/authorized_keys
+        chmod 600 ~/.ssh/authorized_keys
+      when: target_pass is defined
+
   roles:
     - base
     - docker
     - ros2
 
-  tasks:
-    - name: Update system
-      apt:
-        update_cache: yes
-        upgrade: dist
-
-    - name: Install general tools
-      apt:
-        name:
-          - git
-          - curl
-          - htop
-          - vim
-          - net-tools
-          - unzip
-        state: present
-
-    - name: Install GUI (optional)
-      apt:
-        name:
-          - ubuntu-desktop
-        state: present
-      when: gui | default(false)  # true = with desktop, false = headless
