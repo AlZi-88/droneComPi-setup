@@ -35,11 +35,9 @@ jobs:
 
     steps:
       - name: Check PX4 Interfaces via SSH
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.TARGET_PI_IP }}
-          username: drone
-          script: |
+        run: |
+          ssh -o StrictHostKeyChecking=no drone@${{ secrets.TARGET_PI_IP }} << 'EOF'
             source /opt/ros/humble/setup.bash
-            source /home/drone/px4_ros_com/install/setup.bash
+            source /home/drone/ros2_drone_ws/install/setup.bash
             ros2 interface list | grep px4_msgs/msg/VehicleStatus
+          EOF
