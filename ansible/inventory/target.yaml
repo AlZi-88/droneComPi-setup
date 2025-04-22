@@ -3,3 +3,4 @@ all:
     drone:
       ansible_host: "{{ target_ip }}"
       ansible_user: drone
+      ansible_user_password: "{{ target_password }}"
