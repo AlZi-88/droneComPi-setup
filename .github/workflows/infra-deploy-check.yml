@@ -15,12 +15,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
-      - name: Change to ansible directory
-        run: cd ansible
 
       - name: Run playbook to provision target
         run: |
+          cd droneComPi-setup
           ansible-playbook ansible/playbook.yml \
             --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }}"
         env:
