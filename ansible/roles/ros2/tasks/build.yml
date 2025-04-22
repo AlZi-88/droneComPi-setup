@@ -1,0 +1,8 @@
+- name: Build the ROS 2 workspace
+  shell: |
+    source /opt/ros/humble/setup.bash
+    colcon build --package-select px4_ros_com px4_msgs
+  args:
+    chdir: /home/drone/ros2_drone_ws
+  become: false
+  become_user: drone

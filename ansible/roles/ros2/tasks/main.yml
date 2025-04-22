@@ -27,3 +27,11 @@
     insertafter: EOF
   become: yes
   become_user: drone
+
+- name: Create directory for ROS 2 workspace
+  file:
+    path: /home/drone/ros2_drone_ws
+    state: directory
+    owner: drone
+    group: drone
+    mode: '0755'

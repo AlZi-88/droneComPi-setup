@@ -37,18 +37,10 @@
        - libfoonathan-memory-dev
      state: present
  
- - name: Create directory for px4_ros_com
-   file:
-     path: /home/drone/px4_ros_com
-     state: directory
-     owner: drone
-     group: drone
-     mode: '0755'
- 
  - name: Clone PX4 ROS 2 Bridge (px4_ros_com)
    git:
      repo: 'https://github.com/PX4/px4_ros_com.git'
-     dest: /home/drone/px4_ros_com
+     dest: /home/drone/ros2_drone_ws/src/px4_ros_com
      version: main
      update: no
      force: no
@@ -59,7 +51,7 @@
  - name: Clone PX4 msg definitions (px4_msgs)
    git:
      repo: 'https://github.com/PX4/px4_msgs.git'
-     dest: /home/drone/px4_ros_com/src/px4_msgs
+     dest: /home/drone/ros2_drone_ws/src/px4_msgs
      version: main
      update: no
      force: no
