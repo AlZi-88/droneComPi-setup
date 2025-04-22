@@ -1,6 +1,5 @@
 all:
   hosts:
     drone:
-      ansible_host: compi
+      ansible_host: {{ target_ip }}
       ansible_user: drone
-      ansible_ask_pass: true
