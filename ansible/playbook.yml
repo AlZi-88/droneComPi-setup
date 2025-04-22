@@ -1,4 +1,5 @@
-- name: Setup DroneComPi Ubuntu
+
+- name: Setup base system and ROS 2
   hosts: all
   become: yes
 
@@ -6,29 +7,23 @@
     - name: "target_ip"
       prompt: "Enter the IP address of the Target Raspberry Pi"
 
-    - name: "target_pass"
-      prompt: "Enter the password for the 'drone' user on the Target Pi"
-      private: yes
-
-  pre_tasks:
-    - name: Add target host dynamically
-      add_host:
-        name: target
-        ansible_host: "{{ target_ip }}"
-        ansible_user: drone
-        ansible_ssh_pass: "{{ target_pass }}"
-
-    - name: Ensure SSH key is copied to target
-      delegate_to: target
-      become: false
-      ansible.builtin.shell: |
-        mkdir -p ~/.ssh
-        echo "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}" >> ~/.ssh/authorized_keys
-        chmod 600 ~/.ssh/authorized_keys
-      when: target_pass is defined
-
   roles:
     - base
-    - docker
     - ros2
+
+- name: Add PX4 repositories to ROS 2 workspace
+  hosts: all
+  become: yes
+
+  roles:
+    - px4
+
+- name: Build ROS 2 workspace with PX4 packages
+  hosts: all
+  become: yes
+
+  tasks:
+    - import_role:
+        name: ros2
+        tasks_from: build
 
