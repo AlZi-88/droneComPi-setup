@@ -18,7 +18,8 @@ jobs:
 
       - name: Run playbook to provision target
         run: |
-          ansible-playbook ansible/playbook.yml
+          ansible-playbook ansible/playbook.yml \
+            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }}"
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
 
@@ -36,7 +37,6 @@ jobs:
         with:
           host: ${{ secrets.TARGET_PI_IP }}
           username: drone
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             source /opt/ros/humble/setup.bash
             source /home/drone/px4_ros_com/install/setup.bash
