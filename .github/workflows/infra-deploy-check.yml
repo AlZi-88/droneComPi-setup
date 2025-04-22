@@ -18,7 +18,6 @@ jobs:
 
       - name: Run playbook to provision target
         run: |
-          cd droneComPi-setup
           ansible-playbook ansible/playbook.yml \
             --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }}"
         env:
