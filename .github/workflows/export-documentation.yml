@@ -1,0 +1,58 @@
+name: Provision and Test Target Pi
+
+on:
+  push:
+    branches:
+      - main
+      - docu/*
+    paths:
+      - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  
+  export-diagrams:
+    name: Export Structurizr Diagrams and Update README
+    runs-on: [self-hosted, raspi, arm64]
+    if: github.ref == 'refs/heads/main'
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Export diagrams using Structurizr CLI in plantUML
+        working-directory: docs/architecture
+        run: |
+          mkdir -p diagrams
+          structurizr export -workspace workspace.dsl -format plantuml -output diagrams
+
+      - name: Convert PlantUML to PNG
+        working-directory: docs/architecture/diagrams
+        run: |
+          plantuml -t png *.puml
+          
+      - name: Update README with diagrams
+        run: |
+          diagrams_md=""
+          for img in docs/architecture/diagrams/*.png; do
+            filename=$(basename "$img")
+            label=${filename%.*}
+            label=$(echo "$label" | sed -e 's/-/ /g' -e 's/\b\(.\)/\u\1/g')
+            diagrams_md+="![${label}](docs/architecture/diagrams/${filename})\n"
+          done
+
+          awk -v new_content="$diagrams_md" '
+            BEGIN {in_block=0}
+            /<!-- diagrams:start -->/ {print; print new_content; in_block=1; next}
+            /<!-- diagrams:end -->/ {in_block=0}
+            !in_block
+          ' README.md > README.tmp && mv README.tmp README.md
+
+      - name: Commit and push updated diagrams and README
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add README.md docs/architecture/diagrams
+          git commit -m "Update Structurizr diagrams in README"
+          git push
