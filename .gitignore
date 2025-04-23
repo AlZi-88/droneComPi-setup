@@ -52,6 +52,6 @@ qtcreator-*
 CATKIN_IGNORE
 
 # Ignore all contents of the .structurizr directory
-./docs/architecture/structurizr/*
+docs/architecture/structurizr/*
 # ... but keep the folder via this exception
-!./docs/architecture/structurizr/.gitkeep
+!docs/architecture/structurizr/.gitkeep
