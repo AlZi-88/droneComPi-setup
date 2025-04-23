@@ -1,4 +1,4 @@
-name: Provision and Test Target Pi
+name: Generate Architecture Diagrams
 
 on:
   push:
@@ -15,7 +15,6 @@ jobs:
     name: Export Structurizr Diagrams and Update README
     runs-on: [self-hosted, raspi, arm64]
     if: github.ref == 'refs/heads/main'
-    needs: test
 
     steps:
       - name: Checkout repository
