@@ -1,0 +1,500 @@
+{
+  "configuration" : { },
+  "description" : "Description",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedAgent" : "structurizr-ui",
+  "lastModifiedDate" : "2025-04-23T15:35:29Z",
+  "model" : {
+    "deploymentNodes" : [ {
+      "containerInstances" : [ {
+        "containerId" : "2",
+        "deploymentGroups" : [ "Default" ],
+        "environment" : "DroneComPi-Deployment",
+        "id" : "13",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "e74d4c24-2090-48f4-91ad-6274f4c8f159"
+        },
+        "tags" : "Container Instance"
+      } ],
+      "environment" : "DroneComPi-Deployment",
+      "id" : "12",
+      "instances" : "1",
+      "name" : "DroneComPi",
+      "properties" : {
+        "structurizr.dsl.identifier" : "d42f558f-e7d0-487e-810e-f87632ad0d16"
+      },
+      "tags" : "Element,Deployment Node"
+    }, {
+      "containerInstances" : [ {
+        "containerId" : "8",
+        "deploymentGroups" : [ "Default" ],
+        "environment" : "DroneComPi-Deployment",
+        "id" : "15",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "b0ad7b4b-3aa0-4c69-8e40-8739e21e62ef"
+        },
+        "tags" : "Container Instance"
+      } ],
+      "environment" : "DroneComPi-Deployment",
+      "id" : "14",
+      "instances" : "1",
+      "name" : "RunnerPi",
+      "properties" : {
+        "structurizr.dsl.identifier" : "903cb3c7-e0f8-43b6-bfd0-39aaad8ad875"
+      },
+      "tags" : "Element,Deployment Node"
+    } ],
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "description" : "Companion Computer for the drone.",
+        "documentation" : { },
+        "id" : "2",
+        "name" : "Raspberry Pi Controller",
+        "properties" : {
+          "structurizr.dsl.identifier" : "compi_ss_container"
+        },
+        "tags" : "Element,Container",
+        "technology" : "Raspberry Pi 4 8GB RAM"
+      }, {
+        "description" : "Operating system for the Raspberry Pi.",
+        "documentation" : { },
+        "id" : "3",
+        "name" : "Operating System",
+        "properties" : {
+          "structurizr.dsl.identifier" : "ceab8262-f9d3-4aa5-9f3c-f65b9f35ee50"
+        },
+        "tags" : "Element,Container",
+        "technology" : "Ubuntu 22.04 Server"
+      }, {
+        "description" : "Middleware for communication and provisioning of open source packages for e.g. sensor data processing or driving actuators.",
+        "documentation" : { },
+        "id" : "4",
+        "name" : "Middleware",
+        "properties" : {
+          "structurizr.dsl.identifier" : "de6768e7-8f7d-48bd-9aef-742fc890f5ae"
+        },
+        "tags" : "Element,Container",
+        "technology" : "ROS 2 Humble"
+      }, {
+        "description" : "ROS 2 Bridge using uXRCE-DDS",
+        "documentation" : { },
+        "id" : "5",
+        "name" : "PX4-ROS2 bridge",
+        "properties" : {
+          "structurizr.dsl.identifier" : "13c46975-677e-416b-aebf-561721b8f601"
+        },
+        "tags" : "Element,Container",
+        "technology" : "uXRCE-DDS"
+      }, {
+        "description" : "Messages exchanged between PX4 and ROS2.",
+        "documentation" : { },
+        "id" : "6",
+        "name" : "PX4-Messages",
+        "properties" : {
+          "structurizr.dsl.identifier" : "ed3339d9-a527-4d2f-aba7-c6e8f97bf94e"
+        },
+        "tags" : "Element,Container"
+      } ],
+      "description" : "The Raspberry Pi that runs PX4 and ROS2.",
+      "documentation" : { },
+      "id" : "1",
+      "location" : "Unspecified",
+      "name" : "DroneComPi",
+      "properties" : {
+        "structurizr.dsl.identifier" : "compi_ss"
+      },
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "description" : "Deployment and Automation Hardware",
+        "documentation" : { },
+        "id" : "8",
+        "name" : "Runner",
+        "properties" : {
+          "structurizr.dsl.identifier" : "runner_ss_container"
+        },
+        "tags" : "Element,Container",
+        "technology" : "Raspberry Pi 4 8GB RAM"
+      }, {
+        "description" : "Operating system for the Raspberry Pi.",
+        "documentation" : { },
+        "id" : "9",
+        "name" : "Operating System",
+        "properties" : {
+          "structurizr.dsl.identifier" : "c48e4018-5f1d-40b8-961c-57de5de631d6"
+        },
+        "tags" : "Element,Container",
+        "technology" : "Ubuntu 22.04 Server"
+      }, {
+        "description" : "Automates the installation of software on the Target \"ComPi\".",
+        "documentation" : { },
+        "id" : "10",
+        "name" : "Ansible",
+        "properties" : {
+          "structurizr.dsl.identifier" : "21c60b99-bfbf-403a-8ddd-b2a3b2e8b501"
+        },
+        "tags" : "Element,Container",
+        "technology" : "Ansible Playbook"
+      }, {
+        "description" : "Executes CI/CD pipelines.",
+        "documentation" : { },
+        "id" : "11",
+        "name" : "Actions Runner",
+        "properties" : {
+          "structurizr.dsl.identifier" : "65db0b51-d0ff-42f7-9768-cdae69669336"
+        },
+        "tags" : "Element,Container",
+        "technology" : "GitHub Actions"
+      } ],
+      "description" : "Self-hosted GitHub Actions runner for automation.",
+      "documentation" : { },
+      "id" : "7",
+      "location" : "Unspecified",
+      "name" : "GitHub Actions Runner",
+      "properties" : {
+        "structurizr.dsl.identifier" : "runner_ss"
+      },
+      "relationships" : [ {
+        "description" : "Deploys and configures",
+        "destinationId" : "1",
+        "id" : "27",
+        "sourceId" : "7",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "description" : "Developer machine running Ansible",
+        "documentation" : { },
+        "id" : "17",
+        "name" : "MacBook",
+        "properties" : {
+          "structurizr.dsl.identifier" : "mac"
+        },
+        "relationships" : [ {
+          "description" : "Run Ansible to configure Runner",
+          "destinationId" : "18",
+          "id" : "21",
+          "properties" : {
+            "structurizr.dsl.identifier" : "deploystep1"
+          },
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "macOS 13.5.1"
+      }, {
+        "description" : "Self-hosted GitHub Actions runner for automation.",
+        "documentation" : { },
+        "id" : "18",
+        "name" : "Runner Pi",
+        "properties" : {
+          "structurizr.dsl.identifier" : "runnerpi"
+        },
+        "relationships" : [ {
+          "description" : "Register as GitHub Actions Runner",
+          "destinationId" : "20",
+          "id" : "22",
+          "properties" : {
+            "structurizr.dsl.identifier" : "deploystep2"
+          },
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Run Ansible to configure TargetPi",
+          "destinationId" : "19",
+          "id" : "24",
+          "properties" : {
+            "structurizr.dsl.identifier" : "deploystep4"
+          },
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Run final infrastructure test",
+          "destinationId" : "19",
+          "id" : "25",
+          "properties" : {
+            "structurizr.dsl.identifier" : "deploystep5"
+          },
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Send results to GitHub",
+          "destinationId" : "20",
+          "id" : "26",
+          "properties" : {
+            "structurizr.dsl.identifier" : "deploystep6"
+          },
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "Raspberry Pi 4 8GB RAM"
+      }, {
+        "description" : "Executes ROS2 automation",
+        "documentation" : { },
+        "id" : "19",
+        "name" : "Target Pi",
+        "properties" : {
+          "structurizr.dsl.identifier" : "targetpi"
+        },
+        "tags" : "Element,Container",
+        "technology" : "Raspberry Pi 4 8GB RAM"
+      }, {
+        "description" : "Triggers and receives results from workflows",
+        "documentation" : { },
+        "id" : "20",
+        "name" : "GitHub",
+        "properties" : {
+          "structurizr.dsl.identifier" : "github"
+        },
+        "relationships" : [ {
+          "description" : "Trigger job via workflow",
+          "destinationId" : "18",
+          "id" : "23",
+          "properties" : {
+            "structurizr.dsl.identifier" : "deploystep3"
+          },
+          "sourceId" : "20",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "GitHub"
+      } ],
+      "documentation" : { },
+      "id" : "16",
+      "location" : "Unspecified",
+      "name" : "High level overview of DroneComPi",
+      "properties" : {
+        "structurizr.dsl.identifier" : "dronecompi"
+      },
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "Name",
+  "properties" : {
+    "structurizr.dsl" : "d29ya3NwYWNlIHsKCiAgICBtb2RlbCB7CiAgICAgICAgY29tcGlfc3MgPSBzb2Z0d2FyZVN5c3RlbSAiRHJvbmVDb21QaSIgewogICAgICAgICAgICBkZXNjcmlwdGlvbiAiVGhlIFJhc3BiZXJyeSBQaSB0aGF0IHJ1bnMgUFg0IGFuZCBST1MyLiIKICAgICAgICAgICAgCiAgICAgICAgICAgIGNvbXBpX3NzX2NvbnRhaW5lciA9IGNvbnRhaW5lciAiUmFzcGJlcnJ5IFBpIENvbnRyb2xsZXIiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJDb21wYW5pb24gQ29tcHV0ZXIgZm9yIHRoZSBkcm9uZS4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJSYXNwYmVycnkgUGkgNCA4R0IgUkFNIgogICAgICAgICAgICB9CiAgICAgICAgCiAgICAgICAgICAgIGNvbnRhaW5lciAiT3BlcmF0aW5nIFN5c3RlbSIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIk9wZXJhdGluZyBzeXN0ZW0gZm9yIHRoZSBSYXNwYmVycnkgUGkuIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiVWJ1bnR1IDIyLjA0IFNlcnZlciIKICAgICAgICAgICAgfSAgIAogICAgICAgIAogICAgICAgICAgICBjb250YWluZXIgIk1pZGRsZXdhcmUiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJNaWRkbGV3YXJlIGZvciBjb21tdW5pY2F0aW9uIGFuZCBwcm92aXNpb25pbmcgb2Ygb3BlbiBzb3VyY2UgcGFja2FnZXMgZm9yIGUuZy4gc2Vuc29yIGRhdGEgcHJvY2Vzc2luZyBvciBkcml2aW5nIGFjdHVhdG9ycy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJST1MgMiBIdW1ibGUiCiAgICAgICAgICAgIH0KICAgICAgICAgICAgY29udGFpbmVyICJQWDQtUk9TMiBicmlkZ2UiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJST1MgMiBCcmlkZ2UgdXNpbmcgdVhSQ0UtRERTIiAKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgInVYUkNFLUREUyIgICAgICAgCiAgICAgICAgICAgIH0KICAgICAgICAKICAgICAgICAgICAgY29udGFpbmVyICJQWDQtTWVzc2FnZXMiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJNZXNzYWdlcyBleGNoYW5nZWQgYmV0d2VlbiBQWDQgYW5kIFJPUzIuIgogICAgICAgICAgICB9IAogICAgICAgIH0KICAgICAgICBydW5uZXJfc3MgPSBzb2Z0d2FyZVN5c3RlbSAiR2l0SHViIEFjdGlvbnMgUnVubmVyIiB7CiAgICAgICAgICAgIGRlc2NyaXB0aW9uICJTZWxmLWhvc3RlZCBHaXRIdWIgQWN0aW9ucyBydW5uZXIgZm9yIGF1dG9tYXRpb24uIgogICAgICAgIAogICAgICAgICAgICBydW5uZXJfc3NfY29udGFpbmVyID0gY29udGFpbmVyICJSdW5uZXIiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJEZXBsb3ltZW50IGFuZCBBdXRvbWF0aW9uIEhhcmR3YXJlIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiUmFzcGJlcnJ5IFBpIDQgOEdCIFJBTSIKICAgICAgICAgICAgfQogICAgICAgICAgICBjb250YWluZXIgIk9wZXJhdGluZyBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJPcGVyYXRpbmcgc3lzdGVtIGZvciB0aGUgUmFzcGJlcnJ5IFBpLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIlVidW50dSAyMi4wNCBTZXJ2ZXIiCiAgICAgICAgICAgIH0KICAgICAgICAKICAgICAgICAgICAgY29udGFpbmVyICJBbnNpYmxlIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiQXV0b21hdGVzIHRoZSBpbnN0YWxsYXRpb24gb2Ygc29mdHdhcmUgb24gdGhlIFRhcmdldCBcIkNvbVBpXCIuIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiQW5zaWJsZSBQbGF5Ym9vayIKICAgICAgICAgICAgfQogICAgICAgIAogICAgICAgICAgICBjb250YWluZXIgIkFjdGlvbnMgUnVubmVyIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiRXhlY3V0ZXMgQ0kvQ0QgcGlwZWxpbmVzLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIkdpdEh1YiBBY3Rpb25zIgogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgICMhaW5jbHVkZSBjb21wb25lbnRzL2NvbXBhbmlvbl90b29scy5kc2wKICAgICAgICBkZXBsb3ltZW50RW52aXJvbm1lbnQgIkRyb25lQ29tUGktRGVwbG95bWVudCIgewogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiRHJvbmVDb21QaSIgewogICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgY29tcGlfc3NfY29udGFpbmVyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZGVwbG95bWVudE5vZGUgIlJ1bm5lclBpIiB7CiAgICAgICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBydW5uZXJfc3NfY29udGFpbmVyCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgZHJvbmVDb21QaSA9IHNvZnR3YXJlU3lzdGVtICJIaWdoIGxldmVsIG92ZXJ2aWV3IG9mIERyb25lQ29tUGkiIHsKICAgICAgICAgICAgbWFjID0gY29udGFpbmVyICJNYWNCb29rIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiRGV2ZWxvcGVyIG1hY2hpbmUgcnVubmluZyBBbnNpYmxlIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAibWFjT1MgMTMuNS4xIgogICAgICAgICAgICB9CiAgICAgICAgICAgIHJ1bm5lclBpID0gY29udGFpbmVyICAiUnVubmVyIFBpIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiU2VsZi1ob3N0ZWQgR2l0SHViIEFjdGlvbnMgcnVubmVyIGZvciBhdXRvbWF0aW9uLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIlJhc3BiZXJyeSBQaSA0IDhHQiBSQU0iCiAgICAgICAgICAgIH0KICAgICAgICAgICAgdGFyZ2V0UGkgPSBjb250YWluZXIgICJUYXJnZXQgUGkiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJFeGVjdXRlcyBST1MyIGF1dG9tYXRpb24iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJSYXNwYmVycnkgUGkgNCA4R0IgUkFNIgogICAgICAgICAgICB9CiAgICAgICAgICAgCiAgICAgICAgICAgIGdpdGh1YiA9IGNvbnRhaW5lciAiR2l0SHViIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiVHJpZ2dlcnMgYW5kIHJlY2VpdmVzIHJlc3VsdHMgZnJvbSB3b3JrZmxvd3MiCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJHaXRIdWIiCiAgICAgICAgICAgIH0KICAgICAgICAKICAgICAgICAgICAgRGVwbG95U3RlcDEgPSBtYWMgLT4gcnVubmVyUGkgIlJ1biBBbnNpYmxlIHRvIGNvbmZpZ3VyZSBSdW5uZXIiCiAgICAgICAgICAgIERlcGxveVN0ZXAyID0gcnVubmVyUGkgLT4gZ2l0aHViICJSZWdpc3RlciBhcyBHaXRIdWIgQWN0aW9ucyBSdW5uZXIiCiAgICAgICAgICAgIERlcGxveVN0ZXAzID0gZ2l0aHViIC0+IHJ1bm5lclBpICJUcmlnZ2VyIGpvYiB2aWEgd29ya2Zsb3ciCiAgICAgICAgICAgIERlcGxveVN0ZXA0ID0gcnVubmVyUGkgLT4gdGFyZ2V0UGkgIlJ1biBBbnNpYmxlIHRvIGNvbmZpZ3VyZSBUYXJnZXRQaSIKICAgICAgICAgICAgRGVwbG95U3RlcDUgPSBydW5uZXJQaSAtPiB0YXJnZXRQaSAiUnVuIGZpbmFsIGluZnJhc3RydWN0dXJlIHRlc3QiCiAgICAgICAgICAgIERlcGxveVN0ZXA2ID0gcnVubmVyUGkgLT4gZ2l0aHViICJTZW5kIHJlc3VsdHMgdG8gR2l0SHViIgogICAgICAgIH0KICAgICAgICBydW5uZXJfc3MgLT4gY29tcGlfc3MgIkRlcGxveXMgYW5kIGNvbmZpZ3VyZXMiIAogICAgfQoKICAgIHZpZXdzIHsKICAgICAgICBzdHlsZXMgewogICAgICAgIAogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIiMxMTY4YmQiCiAgICAgICAgICAgICAgICBjb2xvciAiI2ZmZmZmZiIKICAgICAgICAgICAgfQogICAgICAgIAogICAgICAgICAgICBlbGVtZW50ICJDb250YWluZXIiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIiM0MzhkZDUiCiAgICAgICAgICAgICAgICBjb2xvciAiI2ZmZmZmZiIKICAgICAgICAgICAgfQogICAgICAgIAogICAgICAgICAgICBlbGVtZW50ICJDb21wb25lbnQiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIiM4NWJiZjAiCiAgICAgICAgICAgICAgICBjb2xvciAiIzAwMDAwMCIKICAgICAgICAgICAgfQogICAgICAgIAogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIiMwODQyN2IiCiAgICAgICAgICAgICAgICBjb2xvciAiI2ZmZmZmZiIKICAgICAgICAgICAgICAgIHNoYXBlICJQZXJzb24iCiAgICAgICAgICAgIH0KICAgICAgICAKICAgICAgICAgICAgcmVsYXRpb25zaGlwICJTeW5jaHJvbm91cyIgewogICAgICAgICAgICAgICAgZGFzaGVkIHRydWUKICAgICAgICAgICAgICAgIHJvdXRpbmcgIkRpcmVjdCIKICAgICAgICAgICAgfQogICAgICAgIAogICAgICAgICAgICByZWxhdGlvbnNoaXAgIkFzeW5jaHJvbm91cyIgewogICAgICAgICAgICAgICAgZGFzaGVkIHRydWUKICAgICAgICAgICAgICAgIHJvdXRpbmcgIk9ydGhvZ29uYWwiCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc3lzdGVtQ29udGV4dCBjb21waV9zcyAiRHJvbmVDb21QaSIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b2xheW91dCBscgogICAgICAgIH0KICAgICAgICAKICAgICAgICBjb250YWluZXIgY29tcGlfc3MgIkRyb25lQ29tUGktQ29udGFpbmVyIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyCiAgICAgICAgfQogICAgICAgIAogICAgICAgIGRlcGxveW1lbnQgcnVubmVyX3NzICJEcm9uZUNvbVBpLURlcGxveW1lbnQiIHsKICAgICAgICAgICAgLyogbm9kZSAiRHJvbmVDb21QaSIgewogICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgY29tcGlfc3MgIkRyb25lQ29tUGktQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KICAgICAgICAgICAgbm9kZSAiUnVubmVyUGkiIHsKICAgICAgICAgICAgICAgIGNvbnRhaW5lckluc3RhbmNlIHJ1bm5lcl9zcyAiR2l0SHViIEFjdGlvbnMgUnVubmVyIiB7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0gKi8KICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CiAgICAgICAgCiAgICAgICAgZHluYW1pYyBkcm9uZUNvbVBpICJEcm9uZUNvbVBpLURlcGxveW1lbnQtU2VxdWVuY2UiIHsKICAgICAgICAgICAgCiAgICAgICAgICAgIERlcGxveVN0ZXAxCiAgICAgICAgICAgIERlcGxveVN0ZXAyCiAgICAgICAgICAgIERlcGxveVN0ZXAzCiAgICAgICAgICAgIERlcGxveVN0ZXA0CiAgICAgICAgICAgIERlcGxveVN0ZXA1CiAgICAgICAgICAgIERlcGxveVN0ZXA2CiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CiAgICAgICAgCiAgICAgICAgCiAgICAgICAgdGhlbWUgZGVmYXVsdAogICAgICAgIAogICAgfQp9"
+  },
+  "views" : {
+    "configuration" : {
+      "branding" : { },
+      "lastSavedView" : "DroneComPi",
+      "metadataSymbols" : "SquareBrackets",
+      "styles" : {
+        "elements" : [ {
+          "background" : "#1168bd",
+          "color" : "#ffffff",
+          "tag" : "Software System"
+        }, {
+          "background" : "#438dd5",
+          "color" : "#ffffff",
+          "tag" : "Container"
+        }, {
+          "background" : "#85bbf0",
+          "color" : "#000000",
+          "tag" : "Component"
+        }, {
+          "background" : "#08427b",
+          "color" : "#ffffff",
+          "shape" : "Person",
+          "tag" : "Person"
+        } ],
+        "relationships" : [ {
+          "dashed" : true,
+          "routing" : "Direct",
+          "tag" : "Synchronous"
+        }, {
+          "dashed" : true,
+          "routing" : "Orthogonal",
+          "tag" : "Asynchronous"
+        } ]
+      },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ]
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "applied" : true,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "dimensions" : {
+        "height" : 3211,
+        "width" : 890
+      },
+      "elements" : [ {
+        "id" : "2",
+        "x" : 219,
+        "y" : 2585
+      }, {
+        "id" : "3",
+        "x" : 219,
+        "y" : 1985
+      }, {
+        "id" : "4",
+        "x" : 219,
+        "y" : 1385
+      }, {
+        "id" : "5",
+        "x" : 219,
+        "y" : 785
+      }, {
+        "id" : "6",
+        "x" : 219,
+        "y" : 185
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "DroneComPi-Container",
+      "order" : 2,
+      "softwareSystemId" : "1"
+    } ],
+    "deploymentViews" : [ {
+      "automaticLayout" : {
+        "applied" : true,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "dimensions" : {
+        "height" : 811,
+        "width" : 1253
+      },
+      "elements" : [ {
+        "id" : "14",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "15",
+        "x" : 401,
+        "y" : 185
+      } ],
+      "environment" : "DroneComPi-Deployment",
+      "generatedKey" : true,
+      "key" : "Deployment-001",
+      "order" : 3,
+      "softwareSystemId" : "7"
+    } ],
+    "dynamicViews" : [ {
+      "automaticLayout" : {
+        "applied" : true,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "dimensions" : {
+        "height" : 1420,
+        "width" : 2390
+      },
+      "elementId" : "16",
+      "elements" : [ {
+        "id" : "17",
+        "x" : 220,
+        "y" : 194
+      }, {
+        "id" : "18",
+        "x" : 970,
+        "y" : 194
+      }, {
+        "id" : "19",
+        "x" : 1720,
+        "y" : 794
+      }, {
+        "id" : "20",
+        "x" : 1720,
+        "y" : 194
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "DroneComPi-Deployment-Sequence",
+      "order" : 4,
+      "relationships" : [ {
+        "id" : "21",
+        "order" : "1",
+        "response" : false
+      }, {
+        "id" : "22",
+        "order" : "2",
+        "response" : false,
+        "vertices" : [ {
+          "x" : 1570,
+          "y" : 344
+        } ]
+      }, {
+        "id" : "23",
+        "order" : "3",
+        "response" : false,
+        "vertices" : [ {
+          "x" : 1570,
+          "y" : 194
+        } ]
+      }, {
+        "id" : "24",
+        "order" : "4",
+        "response" : false,
+        "vertices" : [ {
+          "x" : 1476,
+          "y" : 761
+        } ]
+      }, {
+        "id" : "25",
+        "order" : "5",
+        "response" : false,
+        "vertices" : [ {
+          "x" : 1663,
+          "y" : 526
+        } ]
+      }, {
+        "id" : "26",
+        "order" : "6",
+        "response" : false,
+        "vertices" : [ {
+          "x" : 1570,
+          "y" : 494
+        } ]
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "applied" : true,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "dimensions" : {
+        "height" : 700,
+        "width" : 1600
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 950,
+        "y" : 165
+      }, {
+        "id" : "7",
+        "x" : 200,
+        "y" : 165
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "DroneComPi",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "27"
+      } ],
+      "softwareSystemId" : "1"
+    } ]
+  }
+}
