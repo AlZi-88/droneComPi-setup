@@ -51,6 +51,6 @@ A basic test workflow exists to verify that the runner is operational. This work
 
 Once the test completes, you will see output confirming that the runner successfully executed the job.
 
----
-
-**Next step:** Extend the setup to automatically provision a target Raspberry Pi using Ansible from `compi@runner`.
+# Architectural diagrams
+<!-- diagrams:start -->
+<!-- diagrams:end -->
