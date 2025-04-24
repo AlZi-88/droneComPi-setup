@@ -1,0 +1,35 @@
+@startuml
+set separator none
+title GitHub Actions Runner - Deployment - DroneComPi-Deployment
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam rectangle<<DroneComPiDeployment.RunnerPi.Runner_1>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<DroneComPiDeployment.RunnerPi>> {
+  BackgroundColor #ffffff
+  FontColor #000000
+  BorderColor #888888
+  roundCorner 20
+  shadowing false
+}
+
+rectangle "RunnerPi\n<size:10>[Deployment Node]</size>" <<DroneComPiDeployment.RunnerPi>> as DroneComPiDeployment.RunnerPi {
+  rectangle "==Runner\n<size:10>[Container: Raspberry Pi 4 8GB RAM]</size>\n\nDeployment and Automation Hardware" <<DroneComPiDeployment.RunnerPi.Runner_1>> as DroneComPiDeployment.RunnerPi.Runner_1
+}
+
+@enduml

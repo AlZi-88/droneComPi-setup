@@ -1,0 +1,65 @@
+@startuml
+set separator none
+title DroneComPi - Containers
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam rectangle<<DroneComPi.Middleware>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<DroneComPi.OperatingSystem>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<DroneComPi.PX4Messages>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<DroneComPi.PX4ROS2bridge>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<DroneComPi.RaspberryPiController>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<DroneComPi>> {
+  BorderColor #0b4884
+  FontColor #0b4884
+  shadowing false
+}
+
+rectangle "DroneComPi\n<size:10>[Software System]</size>" <<DroneComPi>> {
+  rectangle "==Raspberry Pi Controller\n<size:10>[Container: Raspberry Pi 4 8GB RAM]</size>\n\nCompanion Computer for the drone." <<DroneComPi.RaspberryPiController>> as DroneComPi.RaspberryPiController
+  rectangle "==Operating System\n<size:10>[Container: Ubuntu 22.04 Server]</size>\n\nOperating system for the Raspberry Pi." <<DroneComPi.OperatingSystem>> as DroneComPi.OperatingSystem
+  rectangle "==Middleware\n<size:10>[Container: ROS 2 Humble]</size>\n\nMiddleware for communication and provisioning of open source packages for e.g. sensor data processing or driving actuators." <<DroneComPi.Middleware>> as DroneComPi.Middleware
+  rectangle "==PX4-ROS2 bridge\n<size:10>[Container: uXRCE-DDS]</size>\n\nROS 2 Bridge using uXRCE-DDS" <<DroneComPi.PX4ROS2bridge>> as DroneComPi.PX4ROS2bridge
+  rectangle "==PX4-Messages\n<size:10>[Container]</size>\n\nMessages exchanged between PX4 and ROS2." <<DroneComPi.PX4Messages>> as DroneComPi.PX4Messages
+}
+
+@enduml

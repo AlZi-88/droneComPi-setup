@@ -53,4 +53,13 @@ Once the test completes, you will see output confirming that the runner successf
 
 # Architectural diagrams
 <!-- diagrams:start -->
+![Structurizr Deployment 001 Key](docs/architecture/diagrams/structurizr-Deployment-001-key.png)
+![Structurizr Deployment 001](docs/architecture/diagrams/structurizr-Deployment-001.png)
+![Structurizr DroneComPi Container Key](docs/architecture/diagrams/structurizr-DroneComPi-Container-key.png)
+![Structurizr DroneComPi Container](docs/architecture/diagrams/structurizr-DroneComPi-Container.png)
+![Structurizr DroneComPi Deployment Sequence Key](docs/architecture/diagrams/structurizr-DroneComPi-Deployment-Sequence-key.png)
+![Structurizr DroneComPi Deployment Sequence](docs/architecture/diagrams/structurizr-DroneComPi-Deployment-Sequence.png)
+![Structurizr DroneComPi Key](docs/architecture/diagrams/structurizr-DroneComPi-key.png)
+![Structurizr DroneComPi](docs/architecture/diagrams/structurizr-DroneComPi.png)
+
 <!-- diagrams:end -->

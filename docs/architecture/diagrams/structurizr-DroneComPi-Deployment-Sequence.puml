@@ -1,0 +1,63 @@
+@startuml
+set separator none
+title High level overview of DroneComPi - Dynamic
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam rectangle<<HighleveloverviewofDroneComPi.GitHub>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<HighleveloverviewofDroneComPi.MacBook>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<HighleveloverviewofDroneComPi.RunnerPi>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<HighleveloverviewofDroneComPi.TargetPi>> {
+  BackgroundColor #438dd5
+  FontColor #ffffff
+  BorderColor #2e6295
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<HighleveloverviewofDroneComPi>> {
+  BorderColor #0b4884
+  FontColor #0b4884
+  shadowing false
+}
+
+rectangle "High level overview of DroneComPi\n<size:10>[Software System]</size>" <<HighleveloverviewofDroneComPi>> {
+  rectangle "==MacBook\n<size:10>[Container: macOS 13.5.1]</size>\n\nDeveloper machine running Ansible" <<HighleveloverviewofDroneComPi.MacBook>> as HighleveloverviewofDroneComPi.MacBook
+  rectangle "==Runner Pi\n<size:10>[Container: Raspberry Pi 4 8GB RAM]</size>\n\nSelf-hosted GitHub Actions runner for automation." <<HighleveloverviewofDroneComPi.RunnerPi>> as HighleveloverviewofDroneComPi.RunnerPi
+  rectangle "==Target Pi\n<size:10>[Container: Raspberry Pi 4 8GB RAM]</size>\n\nExecutes ROS2 automation" <<HighleveloverviewofDroneComPi.TargetPi>> as HighleveloverviewofDroneComPi.TargetPi
+  rectangle "==GitHub\n<size:10>[Container: GitHub]</size>\n\nTriggers and receives results from workflows" <<HighleveloverviewofDroneComPi.GitHub>> as HighleveloverviewofDroneComPi.GitHub
+}
+
+HighleveloverviewofDroneComPi.MacBook .[#707070,thickness=2].> HighleveloverviewofDroneComPi.RunnerPi : "<color:#707070>1. Run Ansible to configure Runner"
+HighleveloverviewofDroneComPi.RunnerPi .[#707070,thickness=2].> HighleveloverviewofDroneComPi.GitHub : "<color:#707070>2. Register as GitHub Actions Runner"
+HighleveloverviewofDroneComPi.GitHub .[#707070,thickness=2].> HighleveloverviewofDroneComPi.RunnerPi : "<color:#707070>3. Trigger job via workflow"
+HighleveloverviewofDroneComPi.RunnerPi .[#707070,thickness=2].> HighleveloverviewofDroneComPi.TargetPi : "<color:#707070>4. Run Ansible to configure TargetPi"
+HighleveloverviewofDroneComPi.RunnerPi .[#707070,thickness=2].> HighleveloverviewofDroneComPi.TargetPi : "<color:#707070>5. Run final infrastructure test"
+HighleveloverviewofDroneComPi.RunnerPi .[#707070,thickness=2].> HighleveloverviewofDroneComPi.GitHub : "<color:#707070>6. Send results to GitHub"
+@enduml

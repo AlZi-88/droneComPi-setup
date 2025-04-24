@@ -1,0 +1,35 @@
+@startuml
+set separator none
+title DroneComPi - System Context
+
+left to right direction
+
+skinparam {
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+
+hide stereotype
+
+skinparam rectangle<<DroneComPi>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+  roundCorner 20
+  shadowing false
+}
+skinparam rectangle<<GitHubActionsRunner>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+  roundCorner 20
+  shadowing false
+}
+
+rectangle "==DroneComPi\n<size:10>[Software System]</size>\n\nThe Raspberry Pi that runs PX4 and ROS2." <<DroneComPi>> as DroneComPi
+rectangle "==GitHub Actions Runner\n<size:10>[Software System]</size>\n\nSelf-hosted GitHub Actions runner for automation." <<GitHubActionsRunner>> as GitHubActionsRunner
+
+GitHubActionsRunner .[#707070,thickness=2].> DroneComPi : "<color:#707070>Deploys and configures"
+@enduml
