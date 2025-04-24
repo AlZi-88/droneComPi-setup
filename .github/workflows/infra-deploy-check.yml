@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'README.md'
+      - '.github/workflows/export-documentation.yml'
   workflow_dispatch:
 
 jobs:
