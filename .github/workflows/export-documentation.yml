@@ -24,12 +24,12 @@ jobs:
         working-directory: docs/architecture
         run: |
           mkdir -p diagrams
-          structurizr export -workspace workspace.dsl -format plantuml -output diagrams
+          /opt/structurizr/structurizr.sh export -workspace workspace.dsl -format plantuml -output diagrams
 
       - name: Convert PlantUML to PNG
         working-directory: docs/architecture/diagrams
         run: |
-          plantuml -t png *.puml
+          java -jar /opt/structurizr/plantuml.jar -t png *.puml
           
       - name: Update README with diagrams
         run: |
