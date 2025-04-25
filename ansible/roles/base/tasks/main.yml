@@ -13,6 +13,7 @@
       - net-tools
       - unzip
       - dkms
+      - linux-headers-generic
       - iw
     state: present
 
@@ -52,19 +53,6 @@
         path: /usr/src/rtl8192eu-1.0/Makefile
         regexp: '^CONFIG_PLATFORM_ARM_AARCH64 = n'
         line: 'CONFIG_PLATFORM_ARM_AARCH64 = y'
-      when: not rtl8192eu_driver.stat.exists
-
-    - name: Create dkms.conf for rtl8192eu
-      copy:
-        dest: /usr/src/rtl8192eu-1.0/dkms.conf
-        content: |
-          PACKAGE_NAME="rtl8192eu"
-          PACKAGE_VERSION="1.0"
-          BUILT_MODULE_NAME[0]="8192eu"
-          DEST_MODULE_LOCATION[0]="/kernel/drivers/net/wireless"
-          AUTOINSTALL="yes"
-          MAKE[0]="make all"
-          CLEAN="make clean"
       when: not rtl8192eu_driver.stat.exists
 
     - name: Check if rtl8192eu is registered with DKMS
