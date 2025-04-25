@@ -12,4 +12,74 @@
       - vim
       - net-tools
       - unzip
+      - dkms
+      - linux-headers-generic
+      - iw
     state: present
+
+- name: Install RTL8192EU driver for TP-Link TL-WN823N v3
+  block:
+    - name: Check if RTL8192EU driver is already installed
+      stat:
+        path: /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
+      register: rtl8192eu_driver
+
+    - name: Remove existing rtl8192eu source directory (if any)
+      ansible.builtin.file:
+        path: /usr/src/rtl8192eu-1.0
+        state: absent
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Clone updated RTL8192EU driver from clnhub
+      git:
+        repo: https://github.com/clnhub/rtl8192eu-linux.git
+        dest: /usr/src/rtl8192eu-1.0
+        version: master
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Disable I386 platform in Makefile
+      lineinfile:
+        path: /usr/src/rtl8192eu-1.0/Makefile
+        regexp: '^CONFIG_PLATFORM_I386_PC = y'
+        line: 'CONFIG_PLATFORM_I386_PC = n'
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Enable ARM64 Raspberry Pi platform in Makefile
+      lineinfile:
+        path: /usr/src/rtl8192eu-1.0/Makefile
+        regexp: '^CONFIG_PLATFORM_ARM_AARCH64 = n'
+        line: 'CONFIG_PLATFORM_ARM_AARCH64 = y'
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Check if rtl8192eu is registered with DKMS
+      shell: dkms status | grep -q '^rtl8192eu/1.0'
+      register: dkms_status
+      ignore_errors: true
+
+    - name: Remove existing rtl8192eu DKMS module (if present)
+      shell: dkms remove rtl8192eu/1.0 --all
+      when:
+        - "'rtl8192eu/1.0' in dkms_status.stdout"
+        - not rtl8192eu_driver.stat.exists
+      register: dkms_remove_result
+      failed_when: false
+      changed_when: "'is not located in the DKMS tree' not in dkms_remove_result.stderr"
+
+    - name: Add, build and install the driver with DKMS
+      shell: |
+        dkms add -m rtl8192eu -v 1.0
+        dkms build rtl8192eu/1.0
+        dkms install rtl8192eu/1.0
+      args:
+        creates: /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Check if 8192eu kernel module is loaded
+      command: lsmod
+      register: lsmod_output
+      changed_when: false
+
+    - name: Load the RTL8192EU module manually if not loaded
+      shell: insmod /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
+      when:
+        - lsmod_output.stdout.find('8192eu') == -1

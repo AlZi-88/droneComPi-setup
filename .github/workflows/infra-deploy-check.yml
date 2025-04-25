@@ -41,7 +41,27 @@ jobs:
       - name: Check PX4 Interfaces via SSH
         run: |
           ssh -o StrictHostKeyChecking=no drone@${{ secrets.TARGET_PI_IP }} << 'EOF'
-            source /opt/ros/humble/setup.bash
-            source /home/drone/ros2_drone_ws/install/setup.bash
-            ros2 interface list | grep px4_msgs/msg/VehicleStatus
+          source /opt/ros/humble/setup.bash
+          source /home/drone/ros2_drone_ws/install/setup.bash
+          ros2 interface list | grep px4_msgs/msg/VehicleStatus
           EOF
+
+      - name: Verify TP-Link WiFi Adapter Presence
+        run: |
+              ssh -o StrictHostKeyChecking=no drone@${{ secrets.TARGET_PI_IP }} << 'EOF'
+              interfaces=$(ip -o link show | awk -F': ' '{print $2}')
+              has_wlan0=false
+              has_wlx=false
+              for iface in $interfaces; do
+                [[ "$iface" == "wlan0" ]] && has_wlan0=true
+                [[ "$iface" == wlx* ]] && has_wlx=true
+              done
+              if $has_wlan0 && $has_wlx; then
+                echo "Found both interfaces"
+              else
+                echo "Missing interfaces"
+                exit 1
+              fi
+              EOF
+        shell: bash
+

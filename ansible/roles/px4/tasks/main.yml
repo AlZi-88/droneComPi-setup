@@ -72,7 +72,7 @@
  - name: Source built workspace in .bashrc
    lineinfile:
      path: /home/drone/.bashrc
-     line: "source /home/drone/px4_ros_com/install/setup.bash"
+     line: "source /home/drone/ros2_drone_ws/install/setup.bash"
      state: present
      insertafter: EOF
    become: yes
