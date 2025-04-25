@@ -83,3 +83,49 @@
       shell: insmod /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
       when:
         - lsmod_output.stdout.find('8192eu') == -1
+
+- name: Get list of wireless interfaces
+  command: iw dev
+  register: iw_dev_output
+  changed_when: false
+
+- name: Set wireless interface variable
+  set_fact:
+    tp_link_interface: "{{ iw_dev_output.stdout | regex_search('Interface (wlx[\\w]+)', '\\1') }}"
+
+- name: Scan for available networks
+  shell: iw dev {{ tp_link_interface }} scan | grep SSID
+  register: wifi_scan
+  changed_when: false
+
+- name: Connect to GP55119708 if found
+  block:
+    - name: Create wpa_supplicant.conf for GP55119708
+      copy:
+        dest: /etc/wpa_supplicant/wpa_supplicant-{{ tp_link_interface }}.conf
+        content: |
+          network={{
+              ssid="GP55119708"
+              psk="travel4155"
+          }}
+      notify: Restart networking
+
+    - name: Reconfigure wpa_supplicant for TP-Link interface
+      command: wpa_cli -i {{ tp_link_interface }} reconfigure
+
+    - name: Start wpa_supplicant for TP-Link interface
+      shell: |
+        nohup wpa_supplicant -B -i {{ tp_link_interface }} -c /etc/wpa_supplicant/wpa_supplicant-{{ tp_link_interface }}.conf
+
+    - name: Obtain IP address via DHCP
+      shell: dhclient {{ tp_link_interface }}
+
+  when: wifi_scan.stdout is search("GP55119708")
+
+- name: Debug message if GP55119708 not found
+  debug:
+    msg: "SSID 'GP55119708' not found."
+  when: wifi_scan.stdout is not search("GP55119708")
+
+  notify:
+    - Restart networking
