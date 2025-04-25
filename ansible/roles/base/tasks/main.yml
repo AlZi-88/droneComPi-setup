@@ -17,10 +17,6 @@
       - iw
     state: present
 
-- name: Gather loaded kernel modules
-  setup:
-    filter: ansible_modules
-
 - name: Install RTL8192EU driver for TP-Link TL-WN823N v3
   block:
     - name: Check if RTL8192EU driver is already installed
@@ -77,11 +73,12 @@
         creates: /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
       when: not rtl8192eu_driver.stat.exists
 
+    - name: Check if 8192eu kernel module is loaded
+      command: lsmod
+      register: lsmod_output
+      changed_when: false
+
     - name: Load the RTL8192EU module manually if not loaded
-      shell: |
-        insmod /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
-      args:
-        executable: /bin/bash
+      shell: insmod /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
       when:
-        - not rtl8192eu_driver.stat.exists
-        - "'8192eu' not in ansible_facts.modules"
+        - lsmod_output.stdout.find('8192eu') == -1
