@@ -55,7 +55,6 @@
       shell: dkms status | grep -q '^rtl8192eu/1.0'
       register: dkms_status
       ignore_errors: true
-      when: not rtl8192eu_driver.stat.exists
 
     - name: Remove existing rtl8192eu DKMS module (if present)
       shell: dkms remove rtl8192eu/1.0 --all
