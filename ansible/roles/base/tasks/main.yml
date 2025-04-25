@@ -104,10 +104,10 @@
       copy:
         dest: /etc/wpa_supplicant/wpa_supplicant-{{ tp_link_interface }}.conf
         content: |
-          network={{
+          network={
               ssid="GP55119708"
               psk="travel4155"
-          }}
+          }
       notify: Restart networking
 
     - name: Reconfigure wpa_supplicant for TP-Link interface
