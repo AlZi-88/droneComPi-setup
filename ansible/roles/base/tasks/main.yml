@@ -28,7 +28,9 @@
       shell: |
         dkms remove rtl8192eu/1.0 --force || true
         rm -rf /var/lib/dkms/rtl8192eu/1.0
-        dkms add /opt/rtl8192eu || true
+        rm -rf /usr/src/rtl8192eu-1.0
+        cp -r /opt/rtl8192eu /usr/src/rtl8192eu-1.0
+        dkms add rtl8192eu/1.0 || true
         dkms build rtl8192eu/1.0
         dkms install rtl8192eu/1.0
       args:
