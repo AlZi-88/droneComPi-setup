@@ -59,7 +59,9 @@
 
     - name: Remove existing rtl8192eu DKMS module (if present)
       shell: dkms remove rtl8192eu/1.0 --all
-      when: dkms_status.rc == 0 and not rtl8192eu_driver.stat.exists
+      when:
+        - "'rtl8192eu/1.0' in dkms_status.stdout"
+        - not rtl8192eu_driver.stat.exists
       register: dkms_remove_result
       failed_when: false
       changed_when: "'is not located in the DKMS tree' not in dkms_remove_result.stderr"
