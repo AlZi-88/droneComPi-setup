@@ -61,9 +61,20 @@
           CLEAN="make clean"
       when: not rtl8192eu_driver.stat.exists
 
-    - name: Build and install the driver with DKMS
+    - name: Check if rtl8192eu is registered with DKMS
+      shell: dkms status | grep -q '^rtl8192eu/1.0'
+      register: dkms_status
+      ignore_errors: true
+
+    - name: Remove existing rtl8192eu DKMS module (if present)
+      shell: dkms remove rtl8192eu/1.0 --all
+      when: dkms_status.rc == 0
+      register: dkms_remove_result
+      failed_when: false
+      changed_when: "'is not located in the DKMS tree' not in dkms_remove_result.stderr"
+
+    - name: Add, build and install the driver with DKMS
       shell: |
-        dkms remove rtl8192eu/1.0 --force || true
         dkms add -m rtl8192eu -v 1.0
         dkms build rtl8192eu/1.0
         dkms install rtl8192eu/1.0
