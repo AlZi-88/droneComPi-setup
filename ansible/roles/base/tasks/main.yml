@@ -91,7 +91,7 @@
 
 - name: Set wireless interface variable
   set_fact:
-    tp_link_interface: "{{ iw_dev_output.stdout | regex_search('Interface (wlx[\\w]+)', '\\1') }}"
+    tp_link_interface: "{{ (iw_dev_output.stdout | regex_findall('Interface (wlx[\\w]+)'))[0] | default('') }}"
 
 - name: Scan for available networks
   shell: iw dev {{ tp_link_interface }} scan | grep SSID
