@@ -27,6 +27,7 @@
     - name: Build and install the driver with DKMS
       shell: |
         dkms remove rtl8192eu/1.0 --force || true
+        rm -rf /var/lib/dkms/rtl8192eu/1.0
         dkms add /opt/rtl8192eu || true
         dkms build rtl8192eu/1.0
         dkms install rtl8192eu/1.0
