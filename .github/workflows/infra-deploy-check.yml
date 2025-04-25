@@ -45,3 +45,12 @@ jobs:
             source /home/drone/ros2_drone_ws/install/setup.bash
             ros2 interface list | grep px4_msgs/msg/VehicleStatus
           EOF
+
+      - name: Verify TP-Link WiFi Adapter Presence
+        run: |
+              ssh -o StrictHostKeyChecking=no drone@${{ secrets.TARGET_PI_IP }} << 'EOF'
+              echo "Available wireless interfaces:"
+              iw dev | grep Interface | grep -E 'wlan0|wlan1'
+              EOF
+        shell: bash
+

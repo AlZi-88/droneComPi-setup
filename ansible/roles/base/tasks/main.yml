@@ -12,4 +12,32 @@
       - vim
       - net-tools
       - unzip
+      - iw
     state: present
+
+- name: Install RTL8192EU driver for TP-Link TL-WN823N v3
+  block:
+    - name: Clone RTL8192EU driver repository
+      git:
+        repo: https://github.com/clnhub/rtl8192eu-linux.git
+        dest: /opt/rtl8192eu
+        version: master
+
+    - name: Build and install the driver with DKMS
+      shell: |
+        dkms remove 8192eu/1.0 --force || true
+        dkms add /opt/rtl8192eu
+        dkms build 8192eu/1.0
+        dkms install 8192eu/1.0
+      args:
+        creates: /lib/modules/{{ ansible_kernel }}/kernel/drivers/net/wireless/8192eu.ko
+
+    - name: Blacklist conflicting r8188eu module
+      copy:
+        dest: /etc/modprobe.d/realtek.conf
+        content: "blacklist r8188eu\n"
+
+    - name: Load new RTL8192EU module
+      modprobe:
+        name: 8192eu
+        state: present
