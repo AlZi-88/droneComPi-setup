@@ -12,6 +12,7 @@
       - vim
       - net-tools
       - unzip
+      - dkms
       - iw
     state: present
 
