@@ -21,7 +21,7 @@
   block:
     - name: Clone RTL8192EU driver repository
       git:
-        repo: https://github.com/clnhub/rtl8192eu-linux.git
+        repo: https://github.com/Mange/rtl8192eu-linux-driver.git
         dest: /opt/rtl8192eu
         version: master
 
