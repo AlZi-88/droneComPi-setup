@@ -27,6 +27,12 @@
         path: /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
       register: rtl8192eu_driver
 
+    - name: Remove existing rtl8192eu source directory (if any)
+      ansible.builtin.file:
+        path: /usr/src/rtl8192eu-1.0
+        state: absent
+      when: rtl8192eu_driver.stat.exists
+
     - name: Clone updated RTL8192EU driver from clnhub
       git:
         repo: https://github.com/clnhub/rtl8192eu-linux.git
@@ -65,10 +71,11 @@
       shell: dkms status | grep -q '^rtl8192eu/1.0'
       register: dkms_status
       ignore_errors: true
+      when: not rtl8192eu_driver.stat.exists
 
     - name: Remove existing rtl8192eu DKMS module (if present)
       shell: dkms remove rtl8192eu/1.0 --all
-      when: dkms_status.rc == 0
+      when: dkms_status.rc == 0 and not rtl8192eu_driver.stat.exists
       register: dkms_remove_result
       failed_when: false
       changed_when: "'is not located in the DKMS tree' not in dkms_remove_result.stderr"
