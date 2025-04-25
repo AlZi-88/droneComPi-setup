@@ -31,7 +31,7 @@
       ansible.builtin.file:
         path: /usr/src/rtl8192eu-1.0
         state: absent
-      when: rtl8192eu_driver.stat.exists
+      when: not rtl8192eu_driver.stat.exists
 
     - name: Clone updated RTL8192EU driver from clnhub
       git:
