@@ -13,6 +13,7 @@
       - net-tools
       - unzip
       - dkms
+      - linux-headers-$(uname -r)
       - iw
     state: present
 
