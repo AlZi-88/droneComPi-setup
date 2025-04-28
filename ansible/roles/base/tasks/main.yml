@@ -22,7 +22,7 @@
   block:
     - name: Create Samba share directory
       file:
-        directory: /home/drone/RecorderShare
+        path: /home/drone/RecorderShare
         state: directory
         owner: drone
         group: drone
