@@ -56,8 +56,11 @@
         rule: allow
         name: Samba
 
-    - name: Add Samba user
-      shell: smbpasswd -a drone
+- name: Add Samba user with predefined password
+  shell: echo -e "{{ samba_password }}\n{{ samba_password }}" | smbpasswd -a drone -s
+  args:
+    executable: /bin/bash
+  when: samba_password is defined
 
 - name: Install RTL8192EU driver for TP-Link TL-WN823N v3
   block:
