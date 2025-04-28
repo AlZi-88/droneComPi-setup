@@ -15,7 +15,46 @@
       - dkms
       - linux-headers-generic
       - iw
+      - samba
     state: present
+
+- name: Register Samba Share
+  block:
+    - name: Create Samba share directory
+      file:
+        directory: /home/drone/RecorderShare
+        state: directory
+        owner: drone
+        group: drone
+        mode: '0777'
+
+    - name: Add Ansible MANAGED BLOCK marker
+      lineinfile:
+        path: /etc/samba/smb.conf
+        line: "# {mark} ANSIBLE MANAGED BLOCK RecorderShare"
+        state: present
+        insertafter: EOF
+
+
+    - name: Ensure Samba share configuration is present
+      blockinfile:
+        path: /etc/samba/smb.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK RecorderShare"
+        block: |
+          [RecorderShare]
+          path = /home/drone/RecorderShare
+          browseable = yes
+          read only = no
+
+    - name: Restart Samba service
+      service:
+        name: smbd
+        state: restarted
+
+    - name: Update the firewall rules to allow Samba traffic
+      ufw:
+        rule: allow
+        name: Samba
 
 - name: Install RTL8192EU driver for TP-Link TL-WN823N v3
   block:
