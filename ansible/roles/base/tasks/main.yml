@@ -57,9 +57,7 @@
         name: Samba
 
     - name: Add Samba user
-      command: smbpasswd -a drone
-      args:
-        creates: /var/lib/samba/usershares/RecorderShare
+      shell: smbpasswd -a drone
 
 - name: Install RTL8192EU driver for TP-Link TL-WN823N v3
   block:
