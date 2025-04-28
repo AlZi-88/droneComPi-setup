@@ -65,3 +65,18 @@ jobs:
               EOF
         shell: bash
 
+      - name: Verify RecorderShare is mounted and accessible from Runner
+        run: |
+          sudo mkdir -p /mnt/recordershare
+          sudo mount -t cifs //${{ secrets.TARGET_PI_IP }}/RecorderShare /mnt/recordershare -o user=drone,password=${{ secrets.DRONE_USER_PASSWORD }},vers=3.0
+          testfile="/mnt/recordershare/github_testfile.txt"
+          echo "Testing SMB share access" | sudo tee $testfile
+          if [ -f "$testfile" ]; then
+            echo "File written successfully"
+            sudo rm $testfile
+          else
+            echo "Failed to write file to SMB share"
+            exit 1
+          fi
+        shell: bash
+
