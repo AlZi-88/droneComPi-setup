@@ -108,7 +108,6 @@
               ssid="GP55119708"
               psk="travel4155"
           }
-      notify: Restart networking
 
     - name: Reconfigure wpa_supplicant for TP-Link interface
       command: wpa_cli -i {{ tp_link_interface }} reconfigure
@@ -126,6 +125,3 @@
   debug:
     msg: "SSID 'GP55119708' not found."
   when: wifi_scan.stdout is not search("GP55119708")
-
-  notify:
-    - Restart networking
