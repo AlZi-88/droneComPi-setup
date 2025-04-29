@@ -18,6 +18,12 @@
       - samba
     state: present
 
+- name: Reboot the system
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+    test_command: whoami
+  become: yes
+
 - name: Register Samba Share
   block:
     - name: Create Samba share directory
