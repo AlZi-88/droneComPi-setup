@@ -68,7 +68,12 @@ jobs:
       - name: Verify RecorderShare is mounted and accessible from Runner
         run: |
           echo "${{ secrets.DRONE_USER_PASSWORD }}" | sudo -S mkdir -p /mnt/recordershare
-          echo "${{ secrets.DRONE_USER_PASSWORD }}" | sudo -S mount -t cifs //${{ secrets.TARGET_PI_IP }}/RecorderShare /mnt/recordershare -o user=drone,password=${{ secrets.DRONE_USER_PASSWORD }},vers=3.0
+          # Check if the directory is already mounted
+          if ! mountpoint -q /mnt/recordershare; then
+            echo "${{ secrets.DRONE_USER_PASSWORD }}" | sudo -S mount -t cifs -o username=drone //${{ secrets.TARGET_PI_IP }}/RecorderShare /mnt/recordershare
+          else
+            echo "/mnt/recordershare is already mounted."
+          fi
           testfile="/mnt/recordershare/github_testfile.txt"
           echo "Testing SMB share access" | sudo tee $testfile
           if [ -f "$testfile" ]; then
