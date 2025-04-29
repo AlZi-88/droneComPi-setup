@@ -150,7 +150,7 @@
   changed_when: false
 
 - name: Bring TP-Link interface up if it is down
-  command: ip link set {{ tp_link_interface }} up
+  command: ip link set dev {{ tp_link_interface }} up
   when: "'state DOWN' in tp_link_status.stdout"
   changed_when: true
 
