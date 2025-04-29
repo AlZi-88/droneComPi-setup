@@ -138,6 +138,16 @@
   set_fact:
     tp_link_interface: "{{ (iw_dev_output.stdout | regex_findall('Interface (wlx[\\w]+)'))[0] | default('') }}"
 
+- name: Check if TP-Link interface is up
+  command: ip link show {{ tp_link_interface }}
+  register: tp_link_status
+  changed_when: false
+
+- name: Bring TP-Link interface up if it is down
+  command: ip link set {{ tp_link_interface }} up
+  when: "'state DOWN' in tp_link_status.stdout"
+  changed_when: true
+
 - name: Scan for available networks
   shell: iw dev {{ tp_link_interface }} scan | grep SSID
   register: wifi_scan
