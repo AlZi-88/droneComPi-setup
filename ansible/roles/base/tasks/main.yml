@@ -129,6 +129,12 @@
       when:
         - lsmod_output.stdout.find('8192eu') == -1
 
+    - name: Ensure RTL8192EU kernel module is loaded at boot
+      lineinfile:
+        path: /etc/modules
+        line: 8192eu
+        state: present
+
 - name: Get list of wireless interfaces
   command: iw dev
   register: iw_dev_output
