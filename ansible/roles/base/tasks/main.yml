@@ -129,11 +129,30 @@
       when:
         - lsmod_output.stdout.find('8192eu') == -1
 
-    - name: Ensure RTL8192EU kernel module is loaded at boot
-      lineinfile:
-        path: /etc/modules
-        line: 8192eu
-        state: present
+
+- name: Ensure RTL8192EU kernel module is loaded at boot
+  lineinfile:
+    path: /etc/modules
+    line: 8192eu
+    state: present
+
+# Ensure RTL8192EU module is loaded after reboot
+- name: Ensure RTL8192EU module is loaded after reboot
+  block:
+    - name: Check if 8192eu kernel module is loaded
+      shell: lsmod | grep 8192eu
+      register: check_8192eu_module
+      ignore_errors: true
+      changed_when: false
+
+    - name: Load RTL8192EU module if not already loaded
+      shell: modprobe 8192eu
+      when: check_8192eu_module.rc != 0
+
+
+- name: Wait for TP-Link USB device to be ready
+  pause:
+    seconds: 5
 
 - name: Get list of wireless interfaces
   command: iw dev
@@ -143,6 +162,11 @@
 - name: Set wireless interface variable
   set_fact:
     tp_link_interface: "{{ (iw_dev_output.stdout | regex_findall('Interface (wlx[\\w]+)'))[0] | default('') }}"
+
+- name: Log available interfaces if no TP-Link interface found
+  debug:
+    msg: "No TP-Link (wlx*) wireless interface found. Please check if the TP-Link adapter is connected and the RTL8192EU module is loaded correctly."
+  when: tp_link_interface == ""
 
 - name: Check if TP-Link interface is up
   command: ip link show {{ tp_link_interface }}
@@ -154,9 +178,11 @@
   when: "'state DOWN' in tp_link_status.stdout"
   changed_when: true
 
-- name: Scan for available networks
+
+- name: Scan for available networks if interface exists
   shell: iw dev {{ tp_link_interface }} scan | grep SSID
   register: wifi_scan
+  when: tp_link_interface != ""
   changed_when: false
 
 - name: Connect to GP55119708 if found
