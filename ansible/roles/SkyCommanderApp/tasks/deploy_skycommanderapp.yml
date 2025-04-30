@@ -22,7 +22,17 @@
         version: main
         update: yes
 
+    - name: Remove existing containers if present
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - skycommander-backend
+        - skycommander-frontend
+        - skycommander
+      ignore_errors: yes
+
     - name: Pull Docker images and start containers
-      command: docker-compose up -d
+      command: docker compose up -d
       args:
         chdir: "{{ app_dir }}"
