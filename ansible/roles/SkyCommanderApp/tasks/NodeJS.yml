@@ -1,0 +1,41 @@
+- name: Install Node.js 20.x via Nodesource
+  become: true
+  block:
+    - name: Remove old nodejs version if present
+      apt:
+        name: 
+          - nodejs
+          - nodejs-doc
+          - libnode-dev
+        state: absent
+        purge: yes
+
+    - name: Add NodeSource Node.js 20.x repo
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+        state: present
+
+    - name: Add Node.js 20.x repo to sources list
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_20.x nodistro main
+        state: present
+        filename: nodesource
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+        update_cache: true
+
+    - name: Ensure npm is up-to-date
+      shell: npm install -g npm
+      args:
+        creates: /usr/local/bin/npm
+
+    - name: Check Node version
+      command: node -v
+      register: node_version
+
+    - name: Debug Node version
+      debug:
+        var: node_version.stdout

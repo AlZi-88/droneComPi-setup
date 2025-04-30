@@ -1,0 +1,9 @@
+- name: Install Node js
+  import_tasks: NodeJS.yml
+
+- name: Upgrade bundled npm to latest version
+  npm:
+    name: npm
+    global: yes
+    state: latest
+  become: yes
