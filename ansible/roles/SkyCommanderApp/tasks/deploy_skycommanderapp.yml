@@ -1,13 +1,11 @@
 - name: Deploy SkyCommanderApp
-  hosts: skycommander_target
   become: true
 
   vars:
     repo_url: "https://github.com/AlZi-88/SkyCommanderApp.git"
     app_dir: "/opt/skycommander"
     docker_compose_file: "docker-compose.yml"
-
-  tasks:
+  block:
     - name: Ensure app directory exists
       file:
         path: "{{ app_dir }}"
