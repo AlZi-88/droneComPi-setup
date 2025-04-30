@@ -1,0 +1,29 @@
+- name: Deploy SkyCommanderApp
+  hosts: skycommander_target
+  become: true
+
+  vars:
+    repo_url: "https://github.com/AlZi-88/SkyCommanderApp.git"
+    app_dir: "/opt/skycommander"
+    docker_compose_file: "docker-compose.yml"
+
+  tasks:
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: drone
+        group: drone
+        mode: '0755'
+
+    - name: Clone or update Git repository
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: main
+        update: yes
+
+    - name: Pull Docker images and start containers
+      command: docker-compose up -d
+      args:
+        chdir: "{{ app_dir }}"

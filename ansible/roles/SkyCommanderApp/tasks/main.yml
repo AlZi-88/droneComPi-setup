@@ -7,3 +7,6 @@
     global: yes
     state: latest
   become: yes
+
+- name: Deploy SkyCommander
+  import_tasks: deploy_skycommanderapp.yml
