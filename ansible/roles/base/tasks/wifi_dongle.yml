@@ -1,0 +1,150 @@
+- name: Install RTL8192EU driver for TP-Link TL-WN823N v3
+  block:
+    - name: Check if RTL8192EU driver is already installed
+      stat:
+        path: /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
+      register: rtl8192eu_driver
+
+    - name: Remove existing rtl8192eu source directory (if any)
+      ansible.builtin.file:
+        path: /usr/src/rtl8192eu-1.0
+        state: absent
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Clone updated RTL8192EU driver from clnhub
+      git:
+        repo: https://github.com/clnhub/rtl8192eu-linux.git
+        dest: /usr/src/rtl8192eu-1.0
+        version: master
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Disable I386 platform in Makefile
+      lineinfile:
+        path: /usr/src/rtl8192eu-1.0/Makefile
+        regexp: '^CONFIG_PLATFORM_I386_PC = y'
+        line: 'CONFIG_PLATFORM_I386_PC = n'
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Enable ARM64 Raspberry Pi platform in Makefile
+      lineinfile:
+        path: /usr/src/rtl8192eu-1.0/Makefile
+        regexp: '^CONFIG_PLATFORM_ARM_AARCH64 = n'
+        line: 'CONFIG_PLATFORM_ARM_AARCH64 = y'
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Check if rtl8192eu is registered with DKMS
+      shell: dkms status | grep -q '^rtl8192eu/1.0'
+      register: dkms_status
+      ignore_errors: true
+
+    - name: Remove existing rtl8192eu DKMS module (if present)
+      shell: dkms remove rtl8192eu/1.0 --all
+      when:
+        - "'rtl8192eu/1.0' in dkms_status.stdout"
+        - not rtl8192eu_driver.stat.exists
+      register: dkms_remove_result
+      failed_when: false
+      changed_when: "'is not located in the DKMS tree' not in dkms_remove_result.stderr"
+
+    - name: Add, build and install the driver with DKMS
+      shell: |
+        dkms add -m rtl8192eu -v 1.0
+        dkms build rtl8192eu/1.0
+        dkms install rtl8192eu/1.0
+      args:
+        creates: /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
+      when: not rtl8192eu_driver.stat.exists
+
+    - name: Check if 8192eu kernel module is loaded
+      command: lsmod
+      register: lsmod_output
+      changed_when: false
+
+    - name: Load the RTL8192EU module manually if not loaded
+      shell: insmod /lib/modules/{{ ansible_kernel }}/updates/dkms/8192eu.ko
+      when:
+        - lsmod_output.stdout.find('8192eu') == -1
+
+
+- name: Ensure RTL8192EU kernel module is loaded at boot
+  lineinfile:
+    path: /etc/modules
+    line: 8192eu
+    state: present
+
+# Ensure RTL8192EU module is loaded after reboot
+- name: Ensure RTL8192EU module is loaded after reboot
+  block:
+    - name: Check if 8192eu kernel module is loaded
+      shell: lsmod | grep 8192eu
+      register: check_8192eu_module
+      ignore_errors: true
+      changed_when: false
+
+    - name: Load RTL8192EU module if not already loaded
+      shell: modprobe 8192eu
+      when: check_8192eu_module.rc != 0
+
+
+- name: Wait for TP-Link USB device to be ready
+  pause:
+    seconds: 5
+
+- name: Get list of wireless interfaces
+  command: iw dev
+  register: iw_dev_output
+  changed_when: false
+
+- name: Set wireless interface variable
+  set_fact:
+    tp_link_interface: "{{ (iw_dev_output.stdout | regex_findall('Interface (wlx[\\w]+)'))[0] | default('') }}"
+
+- name: Log available interfaces if no TP-Link interface found
+  debug:
+    msg: "No TP-Link (wlx*) wireless interface found. Please check if the TP-Link adapter is connected and the RTL8192EU module is loaded correctly."
+  when: tp_link_interface == ""
+
+- name: Check if TP-Link interface is up
+  command: ip link show {{ tp_link_interface }}
+  register: tp_link_status
+  changed_when: false
+
+- name: Bring TP-Link interface up if it is down
+  command: ip link set dev {{ tp_link_interface }} up
+  when: "'state DOWN' in tp_link_status.stdout"
+  changed_when: true
+
+
+- name: Scan for available networks if interface exists
+  shell: iw dev {{ tp_link_interface }} scan | grep SSID
+  register: wifi_scan
+  when: tp_link_interface != ""
+  changed_when: false
+
+- name: Connect to GP55119708 if found
+  block:
+    - name: Create wpa_supplicant.conf for GP55119708
+      copy:
+        dest: /etc/wpa_supplicant/wpa_supplicant-{{ tp_link_interface }}.conf
+        content: |
+          network={
+              ssid="GP55119708"
+              psk="travel4155"
+          }
+
+    - name: Reconfigure wpa_supplicant for TP-Link interface
+      command: wpa_cli -i {{ tp_link_interface }} reconfigure
+
+    - name: Start wpa_supplicant for TP-Link interface
+      shell: |
+        nohup wpa_supplicant -B -i {{ tp_link_interface }} -c /etc/wpa_supplicant/wpa_supplicant-{{ tp_link_interface }}.conf
+
+    - name: Obtain IP address via DHCP
+      shell: dhclient {{ tp_link_interface }}
+
+  when: wifi_scan.stdout is search("GP55119708")
+
+- name: Debug message if GP55119708 not found
+  debug:
+    msg: "SSID 'GP55119708' not found."
+  when: wifi_scan.stdout is not search("GP55119708")
