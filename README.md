@@ -43,13 +43,9 @@ The repository includes:
 A basic test workflow exists to verify that the runner is operational. This workflow simply outputs a message and confirms the runner is responding.
 
 ### How to run the test manually:
-1. Go to the GitHub repository page.
-2. Click on the **"Actions"** tab.
-3. Select the **"Test Local Runner"** workflow from the left menu.
-4. Click **"Run workflow"**, choose the appropriate branch (e.g. `feature/initial_setup`), and confirm.
-5. The workflow should be picked up and executed by `compi@runner`.
-
-Once the test completes, you will see output confirming that the runner successfully executed the job.
+The following workflow describes tests under mac silicon, using multipass vm.
+1. Install multipass
+2. 
 
 # Architectural diagrams
 <!-- diagrams:start -->
