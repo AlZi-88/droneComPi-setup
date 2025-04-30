@@ -2,7 +2,7 @@
   become: true
 
   vars:
-    repo_url: "https://github.com/AlZi-88/SkyCommanderApp.git"
+    repo_url: "git@github.com:AlZi-88/SkyCommanderApp.git"
     app_dir: "/opt/skycommander"
     docker_compose_file: "docker-compose.yml"
   block:
@@ -15,6 +15,7 @@
         mode: '0755'
 
     - name: Clone or update Git repository
+      become_user: drone
       git:
         repo: "{{ repo_url }}"
         dest: "{{ app_dir }}"
