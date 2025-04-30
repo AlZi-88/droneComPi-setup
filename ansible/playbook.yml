@@ -27,3 +27,9 @@
         name: ros2
         tasks_from: build
 
+    - name: Reboot the system
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+        test_command: whoami
+      become: yes
+
