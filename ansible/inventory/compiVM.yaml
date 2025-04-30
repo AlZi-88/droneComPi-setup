@@ -1,0 +1,6 @@
+all:
+  hosts:
+    drone:
+      ansible_host: "{{ target_ip }}"
+      ansible_user: drone
+      ansible_become_password: "{{ target_password }}"
