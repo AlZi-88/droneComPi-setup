@@ -21,9 +21,9 @@
 
     - name: Build the SkyCommanderInterfaces
       become_user: drone
-      workdir: "{{ ros2ws }}"
       shell: |
         source /opt/ros/humble/setup.bash
+        cd "{{ ros2ws }}"
         colcon build --packages-select sky_commander_interfaces
       args:
         executable: /bin/bash
@@ -43,19 +43,18 @@
 
     - name: Build the SkyCommanderAgent
       become_user: drone
-      workdir: "{{ ros2ws }}"
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
+        cd "{{ ros2ws }}"
         colcon build --packages-select sky_commander_agent
       args:
         executable: /bin/bash
 
     - name: Install sky commander agent systemd service
       become: true
-      workdir: "{{ ros2ws }}/src/sky_commander_agent"
       copy:
-        src: service/sky_commander_agent.service
+        src: "{{ ros2ws }}/src/sky_commander_agent/service/sky_commander_agent.service"
         dest: /etc/systemd/system/sky_commander_agent.service
         mode: '0644'
 
@@ -82,19 +81,18 @@
 
     - name: Build the SkyCommanderAgent
       become_user: drone
-      workdir: "{{ ros2ws }}"
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
+        cd "{{ ros2ws }}"
         colcon build --packages-select ros2_gateway
       args:
         executable: /bin/bash
 
     - name: Install ros2_gateway systemd service
       become: true
-      workdir: "{{ ros2ws }}/src/ros2_gateway"
       copy:
-        src: service/ros2_gateway.service
+        src: "{{ ros2ws }}/src/ros2_gateway/service/ros2_gateway.service"
         dest: /etc/systemd/system/ros2_gateway.service
         mode: '0644'
 
