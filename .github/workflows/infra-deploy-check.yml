@@ -34,26 +34,15 @@ jobs:
             exit 1
           fi
 
-      - name: Validate SSH_PRIVATE_KEY secret
-        run: |
-          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "Error: SSH_PRIVATE_KEY secret is not set."
-            exit 1
-          fi
-
-      - name: Validate SSH_PUBLIC_KEY secret
-        run: |
-          if [ -z "${{ secrets.SSH_PUBLIC_KEY }}" ]; then
-            echo "Error: SSH_PUBLIC_KEY secret is not set."
-            exit 1
-          fi
-
       - name: Run playbook to provision target
         working-directory: ansible
         run: |
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > vault_pass.txt
           ansible-playbook playbook.yml \
-            --inventory inventory/target.yaml \              
-            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} target_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }} ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }} ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}" \
+            --inventory inventory/target.yaml \
+            --vault-password-file vault_pass.txt \
+            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} target_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }}"
+          rm -f vault_pass.txt
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
 
@@ -112,4 +101,3 @@ jobs:
             exit 1
           fi
         shell: bash
-
