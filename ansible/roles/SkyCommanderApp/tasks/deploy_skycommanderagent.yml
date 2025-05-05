@@ -21,9 +21,9 @@
 
     - name: Build the SkyCommanderInterfaces
       become_user: drone
+      workdir: "{{ ros2ws }}"
       shell: |
         source /opt/ros/humble/setup.bash
-        cd "/home/drone/ros2_drone_ws"
         colcon build --packages-select sky_commander_interfaces
       args:
         executable: /bin/bash
@@ -43,13 +43,29 @@
 
     - name: Build the SkyCommanderAgent
       become_user: drone
+      workdir: "{{ ros2ws }}"
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
-        cd "/home/drone/ros2_drone_ws"
         colcon build --packages-select sky_commander_agent
       args:
         executable: /bin/bash
+
+    - name: Install sky commander agent systemd service
+      become: true
+      workdir: "{{ ros2ws }}/src/sky_commander_agent"
+      copy:
+        src: service/sky_commander_agent.service
+        dest: /etc/systemd/system/sky_commander_agent.service
+        mode: '0644'
+
+    - name: Reload systemd and enable ros2_gateway service
+      become: true
+      systemd:
+        name: sky_commander_agent.service
+        daemon_reload: yes
+        enabled: yes
+        state: started
 
 - name: Deploy ROS2 Gateway
   vars:
@@ -66,10 +82,26 @@
 
     - name: Build the SkyCommanderAgent
       become_user: drone
+      workdir: "{{ ros2ws }}"
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
-        cd "/home/drone/ros2_drone_ws"
         colcon build --packages-select ros2_gateway
       args:
         executable: /bin/bash
+
+    - name: Install ros2_gateway systemd service
+      become: true
+      workdir: "{{ ros2ws }}/src/ros2_gateway"
+      copy:
+        src: service/ros2_gateway.service
+        dest: /etc/systemd/system/ros2_gateway.service
+        mode: '0644'
+
+    - name: Reload systemd and enable ros2_gateway service
+      become: true
+      systemd:
+        name: ros2_gateway.service
+        daemon_reload: yes
+        enabled: yes
+        state: started
