@@ -3,18 +3,6 @@
   hosts: all
   become: yes
 
-  vars_prompt:
-    - name: "target_ip"
-      prompt: "Enter the IP address of the Target Raspberry Pi"
-    - name: "target_password"
-      prompt: "Enter the password for the Target Raspberry Pi"
-    - name: "samba_password"
-      prompt: "Enter the Samba password for the Target Raspberry Pi"
-    - name: "ssh_private_key"
-      prompt: "Enter the SSH private key for the Target Raspberry Pi"
-    - name: "ssh_public_key"
-      prompt: "Enter the SSH public key for the Target Raspberry Pi"
-
   roles:
     - base
     - ros2
