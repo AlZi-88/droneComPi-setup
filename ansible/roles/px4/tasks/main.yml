@@ -64,7 +64,7 @@
   become_user: drone
   shell: |
     source /opt/ros/humble/setup.bash
-    cd /home/drone/px4_ros_com
+    cd /home/drone/ros2_drone_ws
     colcon build
   args:
     executable: /bin/bash
