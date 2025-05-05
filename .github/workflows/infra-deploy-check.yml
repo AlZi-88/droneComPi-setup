@@ -42,9 +42,11 @@ jobs:
             --inventory inventory/target.yaml \
             --vault-password-file vault_pass.txt \
             --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} target_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }}"
-          rm -f vault_pass.txt
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
+
+      - name: Remove vault password file
+        run: rm -f ansible/vault_pass.txt
 
   test:
     name: Smoke Test ROS2 Interfaces
