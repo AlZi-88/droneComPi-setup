@@ -89,6 +89,16 @@
         version: main
         update: yes
 
+    - name: Install the ros2 gateway package dependencies
+      become_user: drone
+      shell: |
+        source /opt/ros/humble/setup.bash
+        source /home/drone/ros2_drone_ws/install/setup.bash
+        rosdep install --from-paths src --ignore-src -y
+      args:
+        executable: /bin/bash
+        chdir: "{{ ros2ws }}"
+
     - name: Build the SkyCommanderAgent
       become_user: drone
       shell: |
