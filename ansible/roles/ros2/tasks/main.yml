@@ -43,5 +43,3 @@
 
 - name: Update rosdep
   command: rosdep update
-  args:
-    warn: false
