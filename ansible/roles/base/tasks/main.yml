@@ -16,8 +16,13 @@
       - linux-headers-generic
       - iw
       - samba
-      - uvicorn
+      - python3-pip
     state: present
+    
+- name: Install Uvicorn via pip
+  pip:
+    name: uvicorn
+    executable: pip3
 
 - name: Reboot the system
   ansible.builtin.reboot:
