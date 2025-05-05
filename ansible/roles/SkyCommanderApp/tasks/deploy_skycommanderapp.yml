@@ -1,0 +1,38 @@
+- name: Deploy SkyCommanderApp
+  become: true
+
+  vars:
+    repo_url: "git@github.com:AlZi-88/SkyCommanderApp.git"
+    app_dir: "/opt/skycommander"
+    docker_compose_file: "docker-compose.yml"
+  block:
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: drone
+        group: drone
+        mode: '0755'
+
+    - name: Clone or update Git repository
+      become_user: drone
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: main
+        update: yes
+
+    - name: Remove existing containers if present
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - skycommander-backend
+        - skycommander-frontend
+        - skycommander
+      ignore_errors: yes
+
+    - name: Pull Docker images and start containers
+      command: docker compose up -d
+      args:
+        chdir: "{{ app_dir }}"

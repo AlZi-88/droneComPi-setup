@@ -1,0 +1,32 @@
+- name: Ensure .ssh directory exists
+  become: true
+  become_user: drone
+  file:
+    path: /home/drone/.ssh
+    state: directory
+    mode: '0700'
+
+- name: Install SSH private key
+  become: true
+  become_user: drone
+  copy:
+    content: "{{ ssh_private_key }}"
+    dest: /home/drone/.ssh/id_rsa
+    mode: '0600'
+
+- name: Install SSH public key
+  become: true
+  become_user: drone
+  copy:
+    content: "{{ ssh_public_key }}"
+    dest: /home/drone/.ssh/id_rsa.pub
+    mode: '0644'
+
+- name: Add GitHub to known_hosts
+  become: true
+  become_user: drone
+  lineinfile:
+    path: /home/drone/.ssh/known_hosts
+    create: yes
+    line: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
+    state: present

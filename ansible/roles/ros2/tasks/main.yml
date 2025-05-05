@@ -35,3 +35,11 @@
     owner: drone
     group: drone
     mode: '0755'
+
+- name: Initialize rosdep
+  command: rosdep init
+  args:
+    creates: /etc/ros/rosdep/sources.list.d/20-default.list
+
+- name: Update rosdep
+  command: rosdep update

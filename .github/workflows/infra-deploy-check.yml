@@ -20,14 +20,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Validate TARGET_PI_IP secret
+        run: |
+          if [ -z "${{ secrets.TARGET_PI_IP }}" ]; then
+            echo "Error: TARGET_PI_IP secret is not set."
+            exit 1
+          fi
+
+      - name: Validate DRONE_USER_PASSWORD secret
+        run: |
+          if [ -z "${{ secrets.DRONE_USER_PASSWORD }}" ]; then
+            echo "Error: DRONE_USER_PASSWORD secret is not set."
+            exit 1
+          fi
+
       - name: Run playbook to provision target
         working-directory: ansible
         run: |
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > vault_pass.txt
           ansible-playbook playbook.yml \
             --inventory inventory/target.yaml \
-            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} target_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }}" \
+            --vault-password-file vault_pass.txt \
+            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} target_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }}"
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
+
+      - name: Remove vault password file
+        run: rm -f ansible/vault_pass.txt
 
   test:
     name: Smoke Test ROS2 Interfaces
@@ -84,4 +103,3 @@ jobs:
             exit 1
           fi
         shell: bash
-
