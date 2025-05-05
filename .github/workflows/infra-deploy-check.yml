@@ -24,8 +24,13 @@ jobs:
         working-directory: ansible
         run: |
           ansible-playbook playbook.yml \
-            --inventory inventory/target.yaml \
-            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} target_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }}" \
+            --inventory inventory/target.yaml \\
+              
+            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} \
+              target_password=${{ secrets.DRONE_USER_PASSWORD }} \
+              samba_password=${{ secrets.DRONE_USER_PASSWORD }} \
+              ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }} \
+              ssh_public_key = ${{ secrets.SSH_PUBLIC_KEY }}" \
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
 
