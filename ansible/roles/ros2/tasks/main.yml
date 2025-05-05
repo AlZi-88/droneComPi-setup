@@ -40,12 +40,8 @@
   command: rosdep init
   args:
     creates: /etc/ros/rosdep/sources.list.d/20-default.list
-  become_user: drone
-  become: yes
 
 - name: Update rosdep
   command: rosdep update
   args:
     warn: false
-  become_user: drone
-  become: yes
