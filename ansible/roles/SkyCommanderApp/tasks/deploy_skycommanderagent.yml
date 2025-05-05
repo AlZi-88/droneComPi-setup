@@ -23,10 +23,10 @@
       become_user: drone
       shell: |
         source /opt/ros/humble/setup.bash
-        cd "{{ ros2ws }}"
         colcon build --packages-select sky_commander_interfaces
       args:
         executable: /bin/bash
+        chdir: "{{ ros2ws }}"
 
 - name: Deploy SkyCommanderAgent
   vars:
@@ -41,15 +41,25 @@
         version: main
         update: yes
 
+    - name: Install the package dependencies
+      become_user: drone
+      shell: |
+        source /opt/ros/humble/setup.bash
+        source /home/drone/ros2_drone_ws/install/setup.bash
+        rosdep install --from-paths src --ignore-src -y
+      args:
+        executable: /bin/bash
+        chdir: "{{ ros2ws }}"
+
     - name: Build the SkyCommanderAgent
       become_user: drone
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
-        cd "{{ ros2ws }}"
         colcon build --packages-select sky_commander_agent
       args:
         executable: /bin/bash
+        chdir: "{{ ros2ws }}"
 
     - name: Install sky commander agent systemd service
       become: true
@@ -84,10 +94,10 @@
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
-        cd "{{ ros2ws }}"
         colcon build --packages-select ros2_gateway
       args:
         executable: /bin/bash
+        chdir: "{{ ros2ws }}"
 
     - name: Install ros2_gateway systemd service
       become: true
