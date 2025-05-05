@@ -16,6 +16,7 @@
       - linux-headers-generic
       - iw
       - samba
+      - uvicorn
     state: present
 
 - name: Reboot the system
