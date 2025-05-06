@@ -67,6 +67,7 @@
       copy:
         src: "{{ ros2ws }}/src/sky_commander_agent/service/sky_commander_agent.service"
         dest: /etc/systemd/system/sky_commander_agent.service
+        remote_src: true
         mode: '0644'
 
     - name: Reload systemd and enable ros2_gateway service
@@ -116,6 +117,7 @@
       copy:
         src: "{{ ros2ws }}/src/ros2_gateway/service/ros2_gateway.service"
         dest: /etc/systemd/system/ros2_gateway.service
+        remote_src: true
         mode: '0644'
 
     - name: Reload systemd and enable ros2_gateway service
