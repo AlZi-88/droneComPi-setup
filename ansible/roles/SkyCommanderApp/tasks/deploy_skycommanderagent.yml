@@ -70,7 +70,7 @@
         remote_src: true
         mode: '0644'
 
-    - name: Reload systemd and enable ros2_gateway service
+    - name: Reload systemd and enable sky_commander_agent service
       become: true
       systemd:
         name: sky_commander_agent.service
