@@ -43,6 +43,7 @@
 
     - name: Install the package dependencies
       become_user: drone
+      become: true
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
@@ -91,6 +92,7 @@
 
     - name: Install the ros2 gateway package dependencies
       become_user: drone
+      become: true
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
