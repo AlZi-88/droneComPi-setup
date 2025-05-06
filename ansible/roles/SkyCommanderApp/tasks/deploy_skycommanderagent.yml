@@ -46,7 +46,7 @@
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
-        rosdep install --from-paths src --ignore-src -y
+        rosdep install --from-paths src --ignore-src -y -r
       args:
         executable: /bin/bash
         chdir: "{{ ros2ws }}"
@@ -94,7 +94,7 @@
       shell: |
         source /opt/ros/humble/setup.bash
         source /home/drone/ros2_drone_ws/install/setup.bash
-        rosdep install --from-paths src --ignore-src -y
+        rosdep install --from-paths src --ignore-src -y -r
       args:
         executable: /bin/bash
         chdir: "{{ ros2ws }}"
