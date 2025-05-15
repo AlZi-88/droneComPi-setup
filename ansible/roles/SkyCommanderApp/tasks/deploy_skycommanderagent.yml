@@ -42,7 +42,6 @@
         update: yes
 
     - name: Install the package dependencies
-      become_user: drone
       become: true
       shell: |
         source /opt/ros/jazzy/setup.bash
@@ -92,7 +91,6 @@
         update: yes
 
     - name: Install the ros2 gateway package dependencies
-      become_user: drone
       become: true
       shell: |
         source /opt/ros/jazzy/setup.bash
