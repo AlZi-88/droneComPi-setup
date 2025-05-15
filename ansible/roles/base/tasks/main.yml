@@ -76,6 +76,3 @@
   args:
     executable: /bin/bash
   when: samba_password is defined
-
-- import_tasks: wifi_dongle.yml
-  when: tpLinkwifi_enabled | default(false)
