@@ -1,0 +1,129 @@
+- name: Deploy SkyCommanderInterfaces
+  vars:
+    repo_url: "git@github.com:AlZi-88/sky_commander_interfaces.git"
+    ros2ws: "/home/drone/ros2_drone_ws"
+  block:
+    - name: Ensure app directory exists
+      file:
+        path: "{{ ros2ws }}/src"
+        state: directory
+        owner: drone
+        group: drone
+        mode: '0755'
+
+    - name: Clone or update Git repository
+      become_user: drone
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ ros2ws }}/src/sky_commander_interfaces"
+        version: main
+        update: yes
+
+    - name: Build the SkyCommanderInterfaces
+      become_user: drone
+      shell: |
+        source /opt/ros/humble/setup.bash
+        colcon build --packages-select sky_commander_interfaces
+      args:
+        executable: /bin/bash
+        chdir: "{{ ros2ws }}"
+
+- name: Deploy SkyCommanderAgent
+  vars:
+    repo_url: "git@github.com:AlZi-88/sky_commander_agent.git"
+    ros2ws: "/home/drone/ros2_drone_ws"
+  block:
+    - name: Clone or update Git repository
+      become_user: drone
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ ros2ws }}/src/sky_commander_agent"
+        version: main
+        update: yes
+
+    - name: Install the package dependencies
+      become_user: drone
+      become: true
+      shell: |
+        source /opt/ros/humble/setup.bash
+        source /home/drone/ros2_drone_ws/install/setup.bash
+        rosdep install --from-paths src --ignore-src -y -r
+      args:
+        executable: /bin/bash
+        chdir: "{{ ros2ws }}"
+
+    - name: Build the SkyCommanderAgent
+      become_user: drone
+      shell: |
+        source /opt/ros/humble/setup.bash
+        source /home/drone/ros2_drone_ws/install/setup.bash
+        colcon build --packages-select sky_commander_agent
+      args:
+        executable: /bin/bash
+        chdir: "{{ ros2ws }}"
+
+    - name: Install sky commander agent systemd service
+      become: true
+      copy:
+        src: "{{ ros2ws }}/src/sky_commander_agent/service/sky_commander_agent.service"
+        dest: /etc/systemd/system/sky_commander_agent.service
+        remote_src: true
+        mode: '0644'
+
+    - name: Reload systemd and enable sky_commander_agent service
+      become: true
+      systemd:
+        name: sky_commander_agent.service
+        daemon_reload: yes
+        enabled: yes
+        state: started
+
+- name: Deploy ROS2 Gateway
+  vars:
+    repo_url: "git@github.com:AlZi-88/ros2_gateway.git"
+    ros2ws: "/home/drone/ros2_drone_ws"
+  block:
+    - name: Clone or update Git repository
+      become_user: drone
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ ros2ws }}/src/ros2_gateway"
+        version: main
+        update: yes
+
+    - name: Install the ros2 gateway package dependencies
+      become_user: drone
+      become: true
+      shell: |
+        source /opt/ros/humble/setup.bash
+        source /home/drone/ros2_drone_ws/install/setup.bash
+        rosdep install --from-paths src --ignore-src -y -r
+      args:
+        executable: /bin/bash
+        chdir: "{{ ros2ws }}"
+
+    - name: Build the SkyCommanderAgent
+      become_user: drone
+      shell: |
+        source /opt/ros/humble/setup.bash
+        source /home/drone/ros2_drone_ws/install/setup.bash
+        colcon build --packages-select ros2_gateway
+      args:
+        executable: /bin/bash
+        chdir: "{{ ros2ws }}"
+
+    - name: Install ros2_gateway systemd service
+      become: true
+      copy:
+        src: "{{ ros2ws }}/src/ros2_gateway/service/ros2_gateway.service"
+        dest: /etc/systemd/system/ros2_gateway.service
+        remote_src: true
+        mode: '0644'
+
+    - name: Reload systemd and enable ros2_gateway service
+      become: true
+      systemd:
+        name: ros2_gateway.service
+        daemon_reload: yes
+        enabled: yes
+        state: started
