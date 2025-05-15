@@ -63,7 +63,7 @@
   become: yes
   become_user: drone
   shell: |
-    source /opt/ros/humble/setup.bash
+    source /opt/ros/jazzy/setup.bash
     cd /home/drone/ros2_drone_ws
     colcon build
   args:

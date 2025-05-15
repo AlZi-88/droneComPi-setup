@@ -1,3 +1,10 @@
+- name: Allow drone user to install apt packages without password
+  copy:
+    dest: /etc/sudoers.d/99-drone-nopasswd
+    content: |
+      drone ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get
+    mode: '0440'
+
 - name: Update system
   apt:
     update_cache: yes
@@ -17,13 +24,19 @@
       - iw
       - samba
       - python3-pip
+      - python3-venv
     state: present
     
-- name: Install Uvicorn via pip
-  pip:
-    name: uvicorn
-    executable: pip3
+- name: Create virtualenv for ros2_gateway
+  command: python3 -m venv /home/drone/ros2_gateway_venv
+  args:
+    creates: /home/drone/ros2_gateway_venv
 
+- name: Install uvicorn in virtualenv
+  pip:
+    name: uvicorn[standard]
+    virtualenv: /home/drone/ros2_gateway_venv
+    
 - name: Reboot the system
   ansible.builtin.reboot:
     reboot_timeout: 600
@@ -76,6 +89,3 @@
   args:
     executable: /bin/bash
   when: samba_password is defined
-
-- import_tasks: wifi_dongle.yml
-  when: tpLinkwifi_enabled | default(false)

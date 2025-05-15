@@ -5,14 +5,14 @@
 
 - name: Add ROS 2 apt repository
   apt_repository:
-    repo: "deb [arch=arm64] http://packages.ros.org/ros2/ubuntu jammy main"
+    repo: "deb [arch=arm64] http://packages.ros.org/ros2/ubuntu noble main"
     state: present
     filename: ros2-latest
 
 - name: Install ROS 2 base packages
   apt:
     name:
-      - ros-humble-ros-base
+      - ros-jazzy-ros-base
       - python3-colcon-common-extensions
       - python3-argcomplete
       - ros-dev-tools
@@ -22,7 +22,7 @@
 - name: Source ROS 2 in .bashrc
   lineinfile:
     path: /home/drone/.bashrc
-    line: "source /opt/ros/humble/setup.bash"
+    line: "source /opt/ros/jazzy/setup.bash"
     state: present
     insertafter: EOF
   become: yes
@@ -44,3 +44,4 @@
 - name: Update rosdep
   command: rosdep update
   become_user: drone
+  become: false
