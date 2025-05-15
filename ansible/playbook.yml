@@ -2,7 +2,6 @@
 - name: Setup base system and ROS 2
   hosts: all
   become: yes
-
   roles:
     - base
     - ros2

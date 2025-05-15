@@ -1,3 +1,10 @@
+- name: Allow drone user to install apt packages without password
+  copy:
+    dest: /etc/sudoers.d/99-drone-nopasswd
+    content: |
+      drone ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get
+    mode: '0440'
+
 - name: Update system
   apt:
     update_cache: yes
