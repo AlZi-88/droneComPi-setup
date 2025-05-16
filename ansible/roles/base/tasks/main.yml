@@ -40,7 +40,7 @@
     name: 
       - uvicorn[standard]
     virtualenv: /home/drone/ros2_gateway_venv
-    force: yes
+    state: forcereinstall
     
 - name: Reboot the system
   become: yes
