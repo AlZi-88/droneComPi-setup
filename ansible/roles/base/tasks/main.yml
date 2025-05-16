@@ -28,13 +28,14 @@
     state: present
     
 - name: Create virtualenv for ros2_gateway
-  command: python3 -m venv /home/drone/ros2_gateway_venv
+  command: python3 -m venv /home/drone/ros2_gateway_venv --system-site-packages
   args:
     creates: /home/drone/ros2_gateway_venv
 
 - name: Install uvicorn in virtualenv
   pip:
-    name: uvicorn[standard]
+    name: 
+      - uvicorn[standard]
     virtualenv: /home/drone/ros2_gateway_venv
     
 - name: Reboot the system
