@@ -1,20 +1,16 @@
-
 - name: Setup base system and ROS 2
   hosts: all
-  become: yes
   roles:
     - base
     - ros2
 
 - name: Add PX4 Repositories to ROS 2 Workspace
   hosts: all
-  become: yes
   roles:
     - px4
 
 - name: Build ROS 2 workspace with PX4 packages
   hosts: all
-  become: yes
   tasks:
     - import_role:
         name: ros2
@@ -22,7 +18,6 @@
 
 - name: Install and Configure Docker
   hosts: all
-  become: yes
   tasks:
     - import_role:
         name: docker

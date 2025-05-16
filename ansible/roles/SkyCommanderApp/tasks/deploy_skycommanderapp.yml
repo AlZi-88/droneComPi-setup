@@ -1,6 +1,5 @@
 - name: Deploy SkyCommanderApp
   become: true
-
   vars:
     repo_url: "git@github.com:AlZi-88/SkyCommanderApp.git"
     app_dir: "/opt/skycommander"

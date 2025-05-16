@@ -1,15 +1,18 @@
 - name: Add ROS 2 GPG key
+  become: yes
   apt_key:
     url: https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
     state: present
 
 - name: Add ROS 2 apt repository
+  become: yes
   apt_repository:
     repo: "deb [arch=arm64] http://packages.ros.org/ros2/ubuntu noble main"
     state: present
     filename: ros2-latest
 
 - name: Install ROS 2 base packages
+  become: yes
   apt:
     name:
       - ros-jazzy-ros-base
@@ -25,7 +28,6 @@
     line: "source /opt/ros/jazzy/setup.bash"
     state: present
     insertafter: EOF
-  become: yes
   become_user: drone
 
 - name: Create directory for ROS 2 workspace
@@ -37,6 +39,7 @@
     mode: '0755'
 
 - name: Initialize rosdep
+  become: yes
   command: rosdep init
   args:
     creates: /etc/ros/rosdep/sources.list.d/20-default.list

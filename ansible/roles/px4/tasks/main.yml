@@ -1,4 +1,5 @@
 - name: Enable UART in /boot/firmware/config.txt
+  become: yes
   lineinfile:
     path: /boot/firmware/config.txt
     regexp: '^enable_uart='
@@ -7,6 +8,7 @@
   when: uart_enabled | default(false)
 
 - name: Disable serial console in cmdline.txt
+  become: yes
   replace:
     path: /boot/firmware/cmdline.txt
     regexp: 'console=serial0,115200'
@@ -14,6 +16,7 @@
   when: uart_enabled | default(false)
 
 - name: Install PX4 dependencies
+  become: yes
   apt:
     name:
       - python3-pip
@@ -31,6 +34,7 @@
     update_cache: yes
 
 - name: Install Fast DDS dependencies
+  become: yes
   apt:
     name:
       - libfastrtps-dev
@@ -45,7 +49,6 @@
     update: no
     force: no
     clone: yes
-  become: yes
   become_user: drone
 
 - name: Clone PX4 msg definitions (px4_msgs)
@@ -56,11 +59,9 @@
     update: no
     force: no
     clone: yes
-  become: yes
   become_user: drone
 
 - name: Build PX4 ROS 2 workspace
-  become: yes
   become_user: drone
   shell: |
     source /opt/ros/jazzy/setup.bash
@@ -76,5 +77,4 @@
     line: "source /home/drone/ros2_drone_ws/install/setup.bash"
     state: present
     insertafter: EOF
-  become: yes
   become_user: drone

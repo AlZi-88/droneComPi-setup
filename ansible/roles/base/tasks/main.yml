@@ -1,4 +1,5 @@
 - name: Allow drone user to install apt packages without password
+  become: yes
   copy:
     dest: /etc/sudoers.d/99-drone-nopasswd
     content: |
@@ -6,11 +7,13 @@
     mode: '0440'
 
 - name: Update system
+  become: yes
   apt:
     update_cache: yes
     upgrade: dist
 
 - name: Install general tools
+  become: yes
   apt:
     name:
       - git
@@ -39,15 +42,16 @@
     virtualenv: /home/drone/ros2_gateway_venv
     
 - name: Reboot the system
+  become: yes
   ansible.builtin.reboot:
     reboot_timeout: 600
     test_command: whoami
-  become: yes
 
 - import_tasks: ssh.yml
   when: ssh_private_key is defined and ssh_public_key is defined
 
 - name: Register Samba Share
+  become: yes
   block:
     - name: Create Samba share directory
       file:
@@ -86,6 +90,7 @@
         name: Samba
 
 - name: Add Samba user with predefined password
+  become: yes
   shell: echo -e "{{ samba_password }}\n{{ samba_password }}" | smbpasswd -a drone -s
   args:
     executable: /bin/bash
