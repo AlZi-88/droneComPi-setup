@@ -21,25 +21,27 @@
 
 - name: Wait until TP-Link Ethernet usb adapter is listed
   shell: ls /sys/class/net | grep -E 'enx[0-9a-f]{12}'
-  register: tp_interface_check
+  register: ethernet_usb_adapter_name
   retries: 10
   delay: 3
-  until: tp_interface_check.rc == 0
+  until: ethernet_usb_adapter_name.rc == 0
   when: usb_modeswitch_result is changed
 
 - name: Set a fixed IP address for the ethernet usb adapter in the /etc/netplan/01-network-manager-all.yaml file
   become: true
-  lineinfile:
+  blockinfile:
     path: /etc/netplan/01-network-manager-all.yaml
     create: yes
-    line: |
+    state: present
+    mode: '0600'
+    block: |
       network:
         version: 2
-        renderer: NetworkManager
         ethernets:
           {{ ethernet_usb_adapter_name.stdout }}:
-            dhcp4: no
             addresses: [192.168.1.5/24]
+            dhcp4: no
+            
 
 - name: Apply the netplan configuration
   become: true
