@@ -1,7 +1,7 @@
 all:
   hosts:
     drone:
-      ansible_host: "{{ target_ip }}"
+      ansible_host: "{{ campi_ip }}"
       ansible_user: drone
-      ansible_become_password: "{{ target_password }}"
+      ansible_become_password: "{{ campi_password }}"
       uart_enabled: true
