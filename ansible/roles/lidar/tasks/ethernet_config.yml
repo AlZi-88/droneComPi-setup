@@ -3,6 +3,7 @@
     ls /sys/class/net | grep -E 'enx[0-9a-f]{12}'
   register: ethernet_usb_adapter_name
   changed_when: false
+  failed_when: false
 
 - name: Get the usb vendor and product id
   shell: |
