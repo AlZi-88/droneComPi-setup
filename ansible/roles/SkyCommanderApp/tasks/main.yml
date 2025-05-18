@@ -10,6 +10,3 @@
 
 - name: Deploy SkyCommander
   import_tasks: deploy_skycommanderapp.yml
-
-- name: Deploy SkyCommander Agent
-  import_tasks: deploy_skycommanderagent.yml
