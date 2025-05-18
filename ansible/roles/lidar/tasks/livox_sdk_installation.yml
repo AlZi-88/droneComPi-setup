@@ -12,6 +12,7 @@
     dest: /home/drone/Dev/Livox-SDK2
     version: v1.2.5
     update: yes
+    force: yes
 
 - name: Replace stdio.h include in comm/define.h
   ansible.builtin.lineinfile:
