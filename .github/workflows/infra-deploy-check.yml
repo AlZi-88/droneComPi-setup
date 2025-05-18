@@ -22,7 +22,7 @@ jobs:
 
       - name: Validate TARGET_PI_IP secret
         run: |
-          if [ -z "${{ secrets.TARGET_PI_IP }}" ]; then
+          if [ -z "${{ secrets.COMPI_PI_IP }}" ]; then
             echo "Error: TARGET_PI_IP secret is not set."
             exit 1
           fi
@@ -41,7 +41,7 @@ jobs:
           ansible-playbook playbook.yml \
             --inventory inventory/compi.yaml \
             --vault-password-file vault_pass.txt \
-            --extra-vars "target_ip=${{ secrets.TARGET_PI_IP }} target_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }}"
+            --extra-vars "compi_ip=${{ secrets.COMPI_PI_IP }} compi_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }} campi_ip=${{ secrets.CAMPI_PI_IP }} campi_password=${{ secrets.DRONE_USER_PASSWORD }}" \
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
 
@@ -59,7 +59,7 @@ jobs:
     steps:
       - name: Check PX4 Interfaces via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no drone@${{ secrets.TARGET_PI_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no drone@${{ secrets.COMPI_PI_IP }} << 'EOF'
           source /opt/ros/jazzy/setup.bash
           source /home/drone/ros2_drone_ws/install/setup.bash
           ros2 interface list | grep px4_msgs/msg/VehicleStatus
@@ -70,7 +70,7 @@ jobs:
           echo "${{ secrets.DRONE_USER_PASSWORD }}" | sudo -S mkdir -p /mnt/recordershare
           # Check if the directory is already mounted
           if ! mountpoint -q /mnt/recordershare; then
-            echo "${{ secrets.DRONE_USER_PASSWORD }}" | sudo -S mount -t cifs -o username=drone //${{ secrets.TARGET_PI_IP }}/RecorderShare /mnt/recordershare
+            echo "${{ secrets.DRONE_USER_PASSWORD }}" | sudo -S mount -t cifs -o username=drone //${{ secrets.COMPI_PI_IP }}/RecorderShare /mnt/recordershare
           else
             echo "/mnt/recordershare is already mounted."
           fi
@@ -84,3 +84,40 @@ jobs:
             exit 1
           fi
         shell: bash
+
+  comm:
+    name: Verify ROS2 Communication between the two Pis
+    runs-on:
+      - self-hosted
+      - raspi
+      - arm64
+    needs: deploy
+    steps:
+        - name: Start ROS2 Talker on Compi
+          run: |
+            ssh -o StrictHostKeyChecking=no drone@${{ secrets.COMPI_PI_IP }} << 'EOF'
+            source /opt/ros/jazzy/setup.bash
+            export ROS_DOMAIN_ID=0
+            ros2 run demo_nodes_cpp talker
+            EOF
+        - name: Verify ROS2 Communication
+          run: |
+            ssh -o StrictHostKeyChecking=no drone@${{ secrets.CAMPI_PI_IP }} << 'EOF'
+            source /opt/ros/jazzy/setup.bash
+            export ROS_DOMAIN_ID=0
+            ros2 topic echo /chatter
+            if [ $? -ne 0 ]; then
+              echo "Failed to receive messages from /chatter topic"
+              exit 1
+            else
+              echo "Successfully received messages from /chatter topic"
+            fi
+            EOF
+        - name: Stop ROS2 Talker and Listener
+          run: |
+            ssh -o StrictHostKeyChecking=no drone@${{ secrets.COMPI_PI_IP }} << 'EOF'
+            pkill -f talker
+            EOF
+            ssh -o StrictHostKeyChecking=no drone@${{ secrets.CAMPI_PI_IP }} << 'EOF'
+            pkill -f listener
+            EOF
