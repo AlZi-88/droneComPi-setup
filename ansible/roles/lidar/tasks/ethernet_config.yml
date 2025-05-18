@@ -19,11 +19,12 @@
   when: ethernet_usb_adapter_name.stdout == "" and usb_vendor_product_id.stdout != ""
   register: usb_modeswitch_result
 
-- name: Try to get the ethernet usb adapter name again
-  shell: |
-    ls /sys/class/net | grep -E 'enx[0-9a-f]{12}'
-  register: ethernet_usb_adapter_name
-  changed_when: false
+- name: Wait until TP-Link Ethernet usb adapter is listed
+  shell: ls /sys/class/net | grep -E 'enx[0-9a-f]{12}'
+  register: tp_interface_check
+  retries: 10
+  delay: 3
+  until: tp_interface_check.rc == 0
   when: usb_modeswitch_result is changed
 
 - name: Set a fixed IP address for the ethernet usb adapter in the /etc/netplan/01-network-manager-all.yaml file
