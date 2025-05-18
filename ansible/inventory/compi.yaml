@@ -1,7 +1,0 @@
-all:
-  hosts:
-    drone:
-      ansible_host: "{{ compi_ip }}"
-      ansible_user: drone
-      ansible_become_password: "{{ compi_password }}"
-      uart_enabled: true
