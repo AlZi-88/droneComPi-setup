@@ -9,7 +9,7 @@
       pip:
         name: uvicorn[standard]
         virtualenv: /home/drone/ros2_gateway_venv
-      state: forcereinstall
+        state: forcereinstall
 
 - name: Deploy SkyCommanderInterfaces
   vars:
