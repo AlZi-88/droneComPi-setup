@@ -78,13 +78,40 @@
     - import_role:
         name: camera
         tasks_from: libcamera
-        
+
 - name: Install Camera libraries - ROS2 Driver
   hosts: [compi campi]
   tasks:
     - import_role:
         name: camera
         tasks_from: libcamera_ros2_driver
+
+- name: Install the ROS 2 driver for Libcamera systemd service on compi
+  hosts: compi
+  become: true
+  copy:
+    src: /home/drone/ros2_drone_ws/src/libcamera_node/service/libcamera_node_compi.service
+    dest: /etc/systemd/system/libcamera_node.service
+    remote_src: true
+    mode: '0644'
+
+- name: Install the ROS 2 driver for Libcamera systemd service on campi
+  hosts: campi
+  become: true
+  copy:
+    src: /home/drone/ros2_drone_ws/src/libcamera_node/service/libcamera_node_campi.service
+    dest: /etc/systemd/system/libcamera_node.service
+    remote_src: true
+    mode: '0644'
+
+- name: Reload systemd and enable driver service
+  hosts: [compi campi]
+  become: true
+  systemd:
+    name: libcamera_node.service
+    daemon_reload: yes
+    enabled: yes
+    state: started
 
 - name: Build SkyCommanderBackend
   hosts: compi
