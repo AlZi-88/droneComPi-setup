@@ -65,6 +65,16 @@
         name: lidar
         tasks_from: ros2_driver_installation
 
+- name: Install Camera libraries
+  hosts: [compi campi]
+  tasks:
+    - import_role:
+        name: camera
+        tasks_from: 
+          - general
+          - install_camera_libraries
+          - libcamera_ros2_driver
+
 - name: Build SkyCommanderBackend
   hosts: compi
   become: no

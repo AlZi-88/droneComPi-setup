@@ -1,0 +1,44 @@
+- name: Ensure Dev folder exists
+  file:
+    path: /home/drone/Dev
+    state: directory
+    owner: drone
+    group: drone
+    mode: '0755'
+
+- name: Clone the Raspberry fork of libcamera
+  git:
+    repo: "https://github.com/raspberrypi/libcamera.git"
+    dest: /home/drone/Dev/libcamera
+    version: v0.5.0+rpt20250429
+    update: yes
+    track_submodules: yes
+
+- name: Build libcamera
+  shell: |
+    meson setup build
+    ninja -C build
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/libcamera
+
+- name: Install libcamera
+  shell: |
+    ninja -C build install
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/libcamera
+  become: yes
+
+- name: Ensure that library can be found
+  lineinfile:
+    path: /etc/ld.so.conf.d/libcamera.conf
+    line: "/usr/local/lib/aarch-linux-gnu"
+    state: present
+    insertafter: EOF
+  become: yes
+
+- name: Update the library cache
+  command: ldconfig
+  become: yes
+

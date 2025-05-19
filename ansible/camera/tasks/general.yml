@@ -1,0 +1,25 @@
+- name: Install general packages
+  apt:
+    name:
+      - cmake 
+      - libboost-dev
+      - libgnutls28-dev
+      - openssl
+      - libexpat1-dev
+      - libdrm-dev
+      - libjpeg-dev
+      - libtiff-dev
+      - libpng-dev
+      - libevent-dev
+      - qtbase5-dev
+      - libudev-dev
+      - libyaml-cpp-dev
+      - git
+      - pkg-config
+      - python3
+      - python3-pip
+      - python3-pybind11
+      - python3-ply
+      - meson 
+      - ninja-build
+    state: present
