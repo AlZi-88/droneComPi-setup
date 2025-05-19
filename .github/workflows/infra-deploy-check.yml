@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > vault_pass.txt
           ansible-playbook playbook.yml \
-            --inventory inventory/compi.yaml \
+            --inventory inventory/targets.yaml \
             --vault-password-file vault_pass.txt \
             --extra-vars "compi_ip=${{ secrets.COMPI_PI_IP }} compi_password=${{ secrets.DRONE_USER_PASSWORD }} samba_password=${{ secrets.DRONE_USER_PASSWORD }} campi_ip=${{ secrets.CAMPI_PI_IP }} campi_password=${{ secrets.DRONE_USER_PASSWORD }}" \
         env:
