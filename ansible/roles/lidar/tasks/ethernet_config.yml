@@ -38,7 +38,7 @@
       network:
         version: 2
         ethernets:
-          {{ ethernet_usb_adapter_name.stdout }}:
+          {{ ethernet_usb_adapter_name.stdout | default('enx00e04c491b98') }}:
             addresses: [192.168.1.5/24]
             dhcp4: no
             
