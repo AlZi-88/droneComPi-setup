@@ -30,6 +30,13 @@
         name: ros2
         tasks_from: setup_ros2
 
+- name: Install ROS 2 Demos
+  hosts: all
+  tasks:
+    - import_role:
+        name: ros2
+        tasks_from: ros2_demos
+
 - name: Setup samba share on compi
   hosts: compi
   become: yes
