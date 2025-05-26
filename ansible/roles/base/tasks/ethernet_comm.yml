@@ -2,11 +2,11 @@
   set_fact:
     static_ip: >-
       {% if inventory_hostname == 'compi' %}
-        192.168.255.20
+        192.168.255.20/24
       {% elif inventory_hostname == 'campi' %}
-        192.168.255.25
+        192.168.255.25/24
       {% else %}
-        192.168.255.100
+        192.168.255.100/24
       {% endif %}
   become: false
 
@@ -22,7 +22,7 @@
         version: 2
         ethernets:
           eth0:
-            addresses: [{{ static_ip }}/24]
+            addresses: [{{ static_ip }}]
             dhcp4: no
             
 
