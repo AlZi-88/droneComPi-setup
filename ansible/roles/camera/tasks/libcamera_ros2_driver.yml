@@ -12,6 +12,7 @@
     rosdep install --from-paths src --ignore-src -y -r
   args:
     executable: /bin/bash
+    chdir: /home/drone/ros2_drone_ws
   become_user: drone
 
 - name: Build the ROS 2 driver for Libcamera
