@@ -42,7 +42,6 @@
             addresses: [192.168.1.5/24]
             dhcp4: no
             
-
 - name: Apply the netplan configuration
   become: true
   command: netplan apply

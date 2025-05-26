@@ -6,6 +6,14 @@
         name: base
         tasks_from: setup_base
 
+- name: Setup Ethernet communication
+  hosts: [compi campi]
+  become: yes
+  tasks:
+    - import_role:
+        name: base
+        tasks_from: ethernet_comm
+
 - name: Setup SSH
   hosts: all
   become: yes
