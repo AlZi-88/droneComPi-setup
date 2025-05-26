@@ -17,6 +17,7 @@
     create: yes
     state: present
     mode: '0600'
+    marker: "# {mark} ANSIBLE ETHERNET CONFIGURATION"
     block: |
       network:
         version: 2
