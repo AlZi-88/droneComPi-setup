@@ -18,7 +18,7 @@
     state: present
     mode: '0600'
     marker: "# {mark} ANSIBLE ETHERNET CONFIGURATION"
-    block: |
+    block: >-
       network:
         version: 2
         ethernets:

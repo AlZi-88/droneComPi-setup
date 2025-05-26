@@ -35,7 +35,7 @@
     state: present
     mode: '0600'
     marker: "# {mark} ANSIBLE USB ETHERNET CONFIGURATION"
-    block: |
+    block: >-
       network:
         version: 2
         ethernets:
