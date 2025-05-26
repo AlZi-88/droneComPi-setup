@@ -1,5 +1,5 @@
 - name: Set a fixed IP address for the ethernet usb adapter in the /etc/netplan/01-network-manager-all.yaml file
-  hosts: compi
+  host: compi
   become: true
   blockinfile:
     path: /etc/netplan/01-network-manager-all.yaml
@@ -15,7 +15,7 @@
             dhcp4: no
 
 - name: Set a fixed IP address for the ethernet usb adapter in the /etc/netplan/01-network-manager-all.yaml file
-  hosts: campi
+  host: campi
   blockinfile:
     path: /etc/netplan/01-network-manager-all.yaml
     create: yes
@@ -31,6 +31,5 @@
             
 
 - name: Apply the netplan configuration
-  hosts: [ compi campi]
   become: true
   command: netplan apply
