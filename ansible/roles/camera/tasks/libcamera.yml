@@ -34,6 +34,7 @@
   lineinfile:
     path: /etc/ld.so.conf.d/libcamera.conf
     line: "/usr/local/lib/aarch-linux-gnu"
+    create: yes
     state: present
     insertafter: EOF
   become: yes
