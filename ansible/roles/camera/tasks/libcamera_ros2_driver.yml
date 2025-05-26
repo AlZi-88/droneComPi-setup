@@ -6,10 +6,17 @@
     update: yes
   become_user: drone
 
+- name: Install dependencies for the ROS2 driver for libcamera_node
+  shell: |
+    source /opt/ros/jazzy/setup.bash
+    rosdep install --from-paths src --ignore-src -y -r
+  args:
+    executable: /bin/bash
+  become_user: drone
+
 - name: Build the ROS 2 driver for Libcamera
   shell: |
     source /opt/ros/jazzy/setup.bash
-    source /home/drone/ros2_drone_ws/install/setup.bash
     colcon build --packages-select libcamera_node
   args:
     executable: /bin/bash
