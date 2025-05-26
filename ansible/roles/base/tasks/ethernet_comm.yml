@@ -1,5 +1,16 @@
+- name: Define static IP address depending on inventory_hostname
+  set_fact:
+    static_ip: >-
+      {% if inventory_hostname == 'compi' %}
+        192.168.255.20
+      {% elif inventory_hostname == 'campi' %}
+        192.168.255.25
+      {% else %}
+        192.168.255.100
+      {% endif %}
+  become: false
+
 - name: Set a fixed IP address for the ethernet usb adapter in the /etc/netplan/01-network-manager-all.yaml file
-  host: compi
   become: true
   blockinfile:
     path: /etc/netplan/01-network-manager-all.yaml
@@ -11,22 +22,7 @@
         version: 2
         ethernets:
           eth0:
-            addresses: [192.168.255.20/24]
-            dhcp4: no
-
-- name: Set a fixed IP address for the ethernet usb adapter in the /etc/netplan/01-network-manager-all.yaml file
-  host: campi
-  blockinfile:
-    path: /etc/netplan/01-network-manager-all.yaml
-    create: yes
-    state: present
-    mode: '0600'
-    block: |
-      network:
-        version: 2
-        ethernets:
-          eth0:
-            addresses: [192.168.255.20/24]
+            addresses: [{{ static_ip }}/24]
             dhcp4: no
             
 
