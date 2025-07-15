@@ -9,10 +9,11 @@
     update_cache: true
 
 - name: Download and add Docker GPG key
-  get_url:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    dest: /usr/share/keyrings/docker-archive-keyring.gpg
-    mode: '0644'
+  shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | tee /usr/share/keyrings/docker-archive-keyring.gpg > /dev/null
+  args:
+    creates: /usr/share/keyrings/docker-archive-keyring.gpg
+  become: yes
 
 - name: Add Docker repository
   apt_repository:
