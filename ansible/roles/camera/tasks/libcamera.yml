@@ -23,9 +23,10 @@
   delay: 5
   until: git_result is succeeded
 
-- name: Clean and build libcamera (fresh)
+- name: Clean and build libcamera (manuell wipe)
   shell: |
-    meson setup --wipe build
+    rm -rf build
+    meson setup build
     ninja -C build
   args:
     executable: /bin/bash
