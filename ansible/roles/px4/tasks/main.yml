@@ -7,7 +7,6 @@
       dtoverlay=uart0
     marker: "# Enable the serial pins"
   become: yes
-  become_user: drone
   when: uart_enabled | default(false)
 
 - name: Disable serial console in cmdline.txt
@@ -16,7 +15,6 @@
     regexp: 'console=serial0,115200'
     replace: ''
   become: yes
-  become_user: drone
   when: uart_enabled | default(false)
 
 - name: Install PX4 dependencies
@@ -36,7 +34,6 @@
     state: present
     update_cache: yes
   become: yes
-  become_user: drone
 
 - name: Install Fast DDS dependencies
   apt:
@@ -45,7 +42,6 @@
       - libfoonathan-memory-dev
     state: present
   become: yes
-  become_user: drone
 
 - name: Clone PX4 ROS 2 Bridge (px4_ros_com)
   git:
