@@ -9,6 +9,10 @@
   apt:
     update_cache: yes
     upgrade: dist
+  retries: 5
+  delay: 10
+  register: update_result
+  until: update_result is succeeded
 
 - name: Install general tools
   apt:
