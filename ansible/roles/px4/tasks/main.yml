@@ -129,7 +129,7 @@
       Type=simple
       User=root
       WorkingDirectory=/home/drone/ros2_drone_ws
-      ExecStart=/bin/bash -c 'source /opt/ros/jazzy/setup.bash && source /home/drone/ros2_drone_ws/install/setup.bash && MicroXRCEAgent serial --dev /dev/ttyAMA0 -b 921600
+      ExecStart=/bin/bash -c 'source /opt/ros/jazzy/setup.bash && source /home/drone/ros2_drone_ws/install/setup.bash && MicroXRCEAgent serial --dev /dev/ttyAMA0 -b 921600'
       Restart=on-failure
 
       [Install]
