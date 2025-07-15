@@ -1,9 +1,0 @@
-- name: Build the ROS 2 workspace
-  shell: |
-    source /opt/ros/jazzy/setup.bash
-    colcon build --packages-select px4_ros_com px4_msgs
-  args:
-    executable: /bin/bash
-    chdir: /home/drone/ros2_drone_ws
-  become: false
-  become_user: drone

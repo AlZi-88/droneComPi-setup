@@ -1,9 +1,13 @@
 - name: Enable UART in /boot/firmware/config.txt
-  lineinfile:
+  blockinfile:
     path: /boot/firmware/config.txt
-    regexp: '^enable_uart='
-    line: 'enable_uart=1'
-    state: present
+    block: |
+      enable_uart=1
+      dtoverlay=disable-bt
+      dtoverlay=uart0
+    marker: "# Enable the serial pins"
+  become: yes
+  become_user: drone
   when: uart_enabled | default(false)
 
 - name: Disable serial console in cmdline.txt
@@ -11,6 +15,8 @@
     path: /boot/firmware/cmdline.txt
     regexp: 'console=serial0,115200'
     replace: ''
+  become: yes
+  become_user: drone
   when: uart_enabled | default(false)
 
 - name: Install PX4 dependencies
@@ -29,6 +35,8 @@
       - libopencv-dev
     state: present
     update_cache: yes
+  become: yes
+  become_user: drone
 
 - name: Install Fast DDS dependencies
   apt:
@@ -36,6 +44,8 @@
       - libfastrtps-dev
       - libfoonathan-memory-dev
     state: present
+  become: yes
+  become_user: drone
 
 - name: Clone PX4 ROS 2 Bridge (px4_ros_com)
   git:
@@ -45,7 +55,6 @@
     update: no
     force: no
     clone: yes
-  become: yes
   become_user: drone
 
 - name: Clone PX4 msg definitions (px4_msgs)
@@ -56,19 +65,49 @@
     update: no
     force: no
     clone: yes
-  become: yes
   become_user: drone
 
-- name: Build PX4 ROS 2 workspace
-  become: yes
-  become_user: drone
+- name: Build the px4 message definitions
   shell: |
     source /opt/ros/jazzy/setup.bash
-    cd /home/drone/ros2_drone_ws
-    colcon build
+    colcon build --packages-select px4_msgs
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/ros2_drone_ws/
+  become_user: drone
+
+- name: Build px4_ros_com package
+  shell: |
+    source /opt/ros/jazzy/setup.bash
+    source /home/drone/ros2_drone_ws/install/setup.bash
+    colcon build --packages-select px4_ros_com
   args:
     executable: /bin/bash
     chdir: /home/drone/ros2_drone_ws
+  become: false
+  become_user: drone
+
+- name: Clone PX4 ROS 2 Bridge
+  git:
+    repo: 'https://github.com/eProsima/Micro-XRCE-DDS-Agent.git'
+    dest: /home/drone/ros2_drone_ws/src/micro_ros_agent
+    version: v3.0.1
+    update: no
+    force: no
+    clone: yes
+  become: yes
+  become_user: drone
+
+- name: Build the px4 ros Bridge
+  shell: |
+    source /opt/ros/jazzy/setup.bash
+    source /home/drone/ros2_drone_ws/install/setup.bash
+    colcon build --packages-select micro_ros_agent
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/ros2_drone_ws
+  become: false
+  become_user: drone
 
 - name: Source built workspace in .bashrc
   lineinfile:
@@ -76,5 +115,35 @@
     line: "source /home/drone/ros2_drone_ws/install/setup.bash"
     state: present
     insertafter: EOF
-  become: yes
   become_user: drone
+
+- name: Create Service file for PX4 ROS 2 Bridge
+  blockinfile:
+    path: /etc/systemd/system/px4_comm.service
+    create: yes
+    state: present
+    mode: '0644'
+    marker: "# {mark} PX4 ROS 2 Bridge Service"
+    block: |
+      [Unit]
+      Description=PX4 Flight Controller Interface Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=root
+      WorkingDirectory=/home/drone/ros2_drone_ws
+      ExecStart=/bin/bash -c 'source /opt/ros/jazzy/setup.bash && source /home/drone/ros2_drone_ws/install/setup.bash && MicroXRCEAgent serial --dev /dev/ttyAMA0 -b 921600
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+  become: yes
+
+- name: Enable and start PX4 ROS 2 Bridge service
+  systemd:
+    daemon_reload: yes
+    name: px4_comm.service
+    enabled: yes
+    state: started
+  become: yes
