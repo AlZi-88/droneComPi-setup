@@ -6,6 +6,12 @@
     group: drone
     mode: '0755'
 
+- name: Remove stale git index.lock if present
+  file:
+    path: /home/drone/Dev/libcamera/.git/index.lock
+    state: absent
+  ignore_errors: yes
+
 - name: Clone the Raspberry fork of libcamera
   git:
     repo: "https://github.com/raspberrypi/libcamera.git"
