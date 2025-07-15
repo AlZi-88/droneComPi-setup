@@ -74,6 +74,7 @@
 - name: Install Camera libraries - General
   hosts: [compi campi]
   become: yes
+  serial: 1
   tasks:
     - import_role:
         name: camera
