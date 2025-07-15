@@ -47,17 +47,8 @@
 
 - name: Add PX4 Repositories to ROS 2 Workspace
   hosts: compi
-  become: yes
   roles:
     - px4
-
-- name: Build ROS 2 PX4 packages
-  hosts: compi
-  become: no
-  tasks:
-    - import_role:
-        name: ros2
-        tasks_from: build_px4_nodes
 
 - name: Configure Lidar Ethernet Interface
   hosts: compi
