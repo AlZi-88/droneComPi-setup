@@ -93,31 +93,67 @@ jobs:
       - arm64
     needs: deploy
     steps:
-        - name: Start ROS2 Talker on Compi
+        - name: Check that libcamera_node service file is active on compi
           run: |
             ssh -o StrictHostKeyChecking=no drone@${{ secrets.COMPI_PI_IP }} << 'EOF'
-            source /opt/ros/jazzy/setup.bash
-            export ROS_DOMAIN_ID=0
-            ros2 run demo_nodes_cpp talker
-            EOF
-        - name: Verify ROS2 Communication
-          run: |
-            ssh -o StrictHostKeyChecking=no drone@${{ secrets.CAMPI_PI_IP }} << 'EOF'
-            source /opt/ros/jazzy/setup.bash
-            export ROS_DOMAIN_ID=0
-            ros2 topic echo /chatter
+            systemctl is-active --quiet libcamera_node.service
             if [ $? -ne 0 ]; then
-              echo "Failed to receive messages from /chatter topic"
+              echo "libcamera service is not active"
               exit 1
             else
-              echo "Successfully received messages from /chatter topic"
+              echo "libcamera service is active"
             fi
             EOF
-        - name: Stop ROS2 Talker and Listener
+        - name: Check that libcamera_node service file is active on campi
+          run: |
+            ssh -o StrictHostKeyChecking=no drone@${{ secrets.CAMPI_PI_IP }} << 'EOF'
+            systemctl is-active --quiet libcamera_node.service
+            if [ $? -ne 0 ]; then
+              echo "libcamera service is not active"
+              exit 1
+            else
+              echo "libcamera service is active"
+            fi
+            EOF
+        - name: Verify ROS2 Communication from compi to campi
+          run: |
+            ssh -o StrictHostKeyChecking=no drone@${{ secrets.CAMPI_PI_IP }} << 'EOF'
+            source /opt/ros/jazzy/setup.bash
+            source /home/drone/ros2_drone_ws/install/setup.bash
+            export ROS_DOMAIN_ID=0
+            ros2 topic echo /camera_back/image_raw
+            if [ $? -ne 0 ]; then
+              echo "Failed to receive messages from /camera_back/image_raw topic"
+              exit 1
+            else
+              echo "Successfully received messages from /camera_back/image_raw topic"
+            fi
+            ros2 topic echo /camera_front/image_raw
+            if [ $? -ne 0 ]; then
+              echo "Failed to receive messages from /camera_front/image_raw topic"
+              exit 1
+            else
+              echo "Successfully received messages from /camera_front/image_raw topic"
+            fi
+            EOF
+        - name: Verify ROS2 Communication from campi to compi
           run: |
             ssh -o StrictHostKeyChecking=no drone@${{ secrets.COMPI_PI_IP }} << 'EOF'
-            pkill -f talker
-            EOF
-            ssh -o StrictHostKeyChecking=no drone@${{ secrets.CAMPI_PI_IP }} << 'EOF'
-            pkill -f listener
+            source /opt/ros/jazzy/setup.bash
+            source /home/drone/ros2_drone_ws/install/setup.bash
+            export ROS_DOMAIN_ID=0
+            ros2 topic echo /camera_left/image_raw
+            if [ $? -ne 0 ]; then
+              echo "Failed to receive messages from /camera_left/image_raw topic"
+              exit 1
+            else
+              echo "Successfully received messages from /camera_left/image_raw topic"
+            fi
+            ros2 topic echo /camera_right/image_raw
+            if [ $? -ne 0 ]; then
+              echo "Failed to receive messages from /camera_right/image_raw topic"
+              exit 1
+            else
+              echo "Successfully received messages from /camera_right/image_raw topic"
+            fi
             EOF
