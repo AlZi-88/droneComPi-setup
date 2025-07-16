@@ -26,7 +26,10 @@
 
 - name: Wait for any meson process to finish
   shell: |
-    while pgrep -f "meson.*libcamera" >/dev/null; do sleep 1; done
+    while pgrep -f "meson.*libcamera" | grep -v "$$" >/dev/null; do
+      echo "Waiting for other meson process..."
+      sleep 1
+    done
   args:
     executable: /bin/bash
 
