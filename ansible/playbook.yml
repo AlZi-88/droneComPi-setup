@@ -1,27 +1,141 @@
-
-- name: Setup base system and ROS 2
+- name: Setup base system
   hosts: all
   become: yes
-  roles:
-    - base
-    - ros2
+  tasks:
+    - import_role:
+        name: base
+        tasks_from: setup_base
 
-- name: Add PX4 Repositories to ROS 2 Workspace
+- name: Setup Ethernet communication
+  hosts: [compi campi]
+  become: yes
+  tasks:
+    - import_role:
+        name: base
+        tasks_from: ethernet_comm
+
+- name: Setup SSH
   hosts: all
   become: yes
-  roles:
-    - px4
+  tasks:
+    - import_role:
+        name: base
+        tasks_from: ssh
 
-- name: Build ROS 2 workspace with PX4 packages
+- name: Install ROS2
   hosts: all
   become: yes
   tasks:
     - import_role:
         name: ros2
-        tasks_from: build
+        tasks_from: setup_ros2
+
+#- name: Install ROS 2 Demos
+#  hosts: all
+#  tasks:
+#    - import_role:
+#        name: ros2
+#        tasks_from: ros2_demos
+
+- name: Setup samba share on compi
+  hosts: compi
+  become: yes
+  tasks:
+    - import_role:
+        name: base
+        tasks_from: samba
+
+- name: Add PX4 Repositories to ROS 2 Workspace
+  hosts: compi
+  roles:
+    - px4
+
+- name: Configure Lidar Ethernet Interface
+  hosts: compi
+  tasks:
+    - import_role:
+        name: lidar
+        tasks_from: ethernet_config
+
+- name: Install Lidar SDK
+  hosts: compi
+  tasks:
+    - import_role:
+        name: lidar
+        tasks_from: livox_sdk_installation
+
+- name: Install Lidar Driver
+  hosts: compi
+  tasks:
+    - import_role:
+        name: lidar
+        tasks_from: ros2_driver_installation
+
+- name: Install Camera libraries - General
+  hosts: [compi, campi]
+  become: yes
+  tasks:
+    - import_role:
+        name: camera
+        tasks_from: general
+
+- name: Install Camera libraries - Install Libraries
+  hosts: [compi, campi]
+  serial: 1
+  tasks:
+    - import_role:
+        name: camera
+        tasks_from: libcamera
+
+- name: Install Camera libraries - ROS2 Driver
+  hosts: [compi, campi]
+  serial: 1
+  tasks:
+    - import_role:
+        name: camera
+        tasks_from: libcamera_ros2_driver
+
+- name: Install the ROS 2 driver for Libcamera systemd service on compi
+  hosts: compi
+  become: true
+  tasks:
+    - copy:
+        src: /home/drone/ros2_drone_ws/src/libcamera_node/service/libcamera_node_compi.service
+        dest: /etc/systemd/system/libcamera_node.service
+        remote_src: true
+        mode: '0644'
+
+- name: Install the ROS 2 driver for Libcamera systemd service on campi
+  hosts: campi
+  become: true
+  tasks:
+    - copy:
+        src: /home/drone/ros2_drone_ws/src/libcamera_node/service/libcamera_node_campi.service
+        dest: /etc/systemd/system/libcamera_node.service
+        remote_src: true
+        mode: '0644'
+
+- name: Reload systemd and enable driver service
+  hosts: [compi campi]
+  serial: 1
+  become: true
+  tasks:
+    - systemd:
+        name: libcamera_node.service
+        daemon_reload: yes
+        enabled: yes
+        state: started
+
+- name: Build SkyCommanderBackend
+  hosts: compi
+  become: no
+  tasks:
+    - import_role:
+        name: ros2
+        tasks_from: build_skycommanderbackend
 
 - name: Install and Configure Docker
-  hosts: all
+  hosts: compi
   become: yes
   tasks:
     - import_role:
@@ -29,7 +143,7 @@
         tasks_from: docker
 
 - name: Install SkyCommanderApp
-  hosts: all
+  hosts: compi
   roles:
     - SkyCommanderApp
 

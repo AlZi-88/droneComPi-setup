@@ -1,0 +1,13 @@
+all:
+  hosts:
+    campi:
+      ansible_host: "{{ campi_ip }}"
+      ansible_user: drone
+      ansible_become_password: "{{ campi_password }}"
+      uart_enabled: true
+
+    compi:
+      ansible_host: "{{ compi_ip }}"
+      ansible_user: drone
+      ansible_become_password: "{{ compi_password }}"
+      uart_enabled: true

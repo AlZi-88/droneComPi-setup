@@ -1,0 +1,39 @@
+- name: Allow drone user to install apt packages without password
+  copy:
+    dest: /etc/sudoers.d/99-drone-nopasswd
+    content: |
+      drone ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get
+    mode: '0440'
+
+- name: Update system
+  apt:
+    update_cache: yes
+    upgrade: dist
+  retries: 5
+  delay: 10
+  register: update_result
+  until: update_result is succeeded
+
+- name: Install general tools
+  apt:
+    name:
+      - git
+      - curl
+      - htop
+      - vim
+      - net-tools
+      - unzip
+      - dkms
+      - linux-headers-generic
+      - iw
+      - python3-pip
+      - python3-venv
+      - v4l-utils
+    state: present
+    
+- name: Reboot the system
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+    test_command: whoami
+  become: yes
+

@@ -1,3 +1,16 @@
+- name: Prepare node deployement
+  block:
+    - name: Create virtualenv for ros2_gateway
+      command: python3 -m venv /home/drone/ros2_gateway_venv --system-site-packages
+      args:
+        creates: /home/drone/ros2_gateway_venv
+
+    - name: Install uvicorn in virtualenv
+      pip:
+        name: uvicorn[standard]
+        virtualenv: /home/drone/ros2_gateway_venv
+        state: forcereinstall
+
 - name: Deploy SkyCommanderInterfaces
   vars:
     repo_url: "git@github.com:AlZi-88/sky_commander_interfaces.git"

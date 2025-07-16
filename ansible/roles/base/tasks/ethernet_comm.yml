@@ -1,0 +1,32 @@
+- name: Define static IP address depending on inventory_hostname
+  set_fact:
+    static_ip: >-
+      {% if inventory_hostname == 'compi' %}
+        192.168.255.20/24
+      {% elif inventory_hostname == 'campi' %}
+        192.168.255.25/24
+      {% else %}
+        192.168.255.100/24
+      {% endif %}
+  become: false
+
+- name: Set a fixed IP address for the ethernet usb adapter in the /etc/netplan/01-network-manager-all.yaml file
+  become: true
+  blockinfile:
+    path: /etc/netplan/01-network-manager-all.yaml
+    create: yes
+    state: present
+    mode: '0600'
+    marker: "# {mark} ANSIBLE ETHERNET CONFIGURATION"
+    block: >-
+      network:
+        version: 2
+        ethernets:
+          eth0:
+            addresses: [{{ static_ip }}]
+            dhcp4: no
+            
+
+- name: Apply the netplan configuration
+  become: true
+  command: netplan apply

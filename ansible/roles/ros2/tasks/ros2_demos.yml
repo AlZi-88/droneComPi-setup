@@ -1,0 +1,30 @@
+- name: Create demo ros2 Workspace
+  file:
+    path: /home/drone/ros2_demo_ws/src
+    state: directory
+
+- name: Clone or update the ROS 2 demo repository
+  git:
+    repo: "https://github.com/ros2/demos.git"
+    dest: /home/drone/ros2_demo_ws/src/demos
+    version: "jazzy"
+    update: yes
+  become_user: drone
+
+- name: Install dependencies for ROS 2 demos
+  shell: |
+    source /opt/ros/jazzy/setup.bash
+    rosdep install --from-paths src --ignore-src -y -r
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/ros2_demo_ws
+  become_user: drone
+
+- name: Build the ROS 2 demos
+  shell: |
+    source /opt/ros/jazzy/setup.bash
+    colcon build
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/ros2_demo_ws
+  become_user: drone

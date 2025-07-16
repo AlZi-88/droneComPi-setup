@@ -1,0 +1,53 @@
+- name: Create directory for Livox SDK
+  file:
+    path: /home/drone/Dev
+    state: directory
+    owner: drone
+    group: drone
+    mode: '0755'
+
+- name: Download Livox SDK2
+  git:
+    repo: "https://github.com/Livox-SDK/Livox-SDK2.git"
+    dest: /home/drone/Dev/Livox-SDK2
+    version: v1.2.5
+    update: yes
+    force: yes
+
+- name: Replace stdio.h include in comm/define.h
+  ansible.builtin.lineinfile:
+    path: /home/drone/Dev/Livox-SDK2/sdk_core/comm/define.h
+    regexp: '^#include <stdio.h>'
+    line: '#include <cstdint>'
+    state: present
+
+- name: Add cstdint include in sdk_core/logger_handler/file_manager.h
+  ansible.builtin.lineinfile:
+    path: /home/drone/Dev/Livox-SDK2/sdk_core/logger_handler/file_manager.h
+    line: '#include <cstdint>'
+    state: present
+    insertbefore: '#include <string>'
+
+- name: Create build directory
+  file:
+    path: /home/drone/Dev/Livox-SDK2/build
+    state: directory
+    owner: drone
+    group: drone
+    mode: '0755'
+
+- name: Build Livox SDK2
+  shell: |
+    cmake .. -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON -DCMAKE_CXX_FLAGS="-Wno-c++20-compat -Wno-error" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release
+    make -j4
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/Livox-SDK2/build
+
+- name: Install Livox SDK2
+  shell: |
+    make install
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/Livox-SDK2/build
+  become: yes

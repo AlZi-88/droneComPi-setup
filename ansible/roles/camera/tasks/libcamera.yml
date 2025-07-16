@@ -1,0 +1,73 @@
+- name: Ensure Dev folder exists
+  file:
+    path: /home/drone/Dev
+    state: directory
+    owner: drone
+    group: drone
+    mode: '0755'
+
+- name: Remove stale git index.lock if present
+  file:
+    path: /home/drone/Dev/libcamera/.git/index.lock
+    state: absent
+  ignore_errors: yes
+
+- name: Clone the Raspberry fork of libcamera
+  git:
+    repo: "https://github.com/raspberrypi/libcamera.git"
+    dest: /home/drone/Dev/libcamera
+    version: v0.5.0+rpt20250429
+    track_submodules: yes
+  register: git_result
+  retries: 3
+  delay: 5
+  until: git_result is succeeded
+
+
+- name: Wait for any meson process to finish
+  shell: |
+    while pgrep -f "meson.*libcamera" | grep -v "$$" >/dev/null; do
+      echo "Waiting for other meson process..."
+      sleep 1
+    done
+  args:
+    executable: /bin/bash
+
+- name: Ensure libcamera build folder is removed
+  file:
+    path: /home/drone/Dev/libcamera/build
+    state: absent
+
+- name: Setup libcamera with meson
+  shell: meson setup build
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/libcamera
+
+- name: Build libcamera with ninja
+  shell: ninja -C build
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/libcamera
+
+- name: Install libcamera
+  shell: |
+    ninja -C build install
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/libcamera
+  become: yes
+
+- name: Ensure that library can be found
+  lineinfile:
+    path: /etc/ld.so.conf.d/libcamera.conf
+    line: "/usr/local/lib/aarch-linux-gnu"
+    create: yes
+    state: present
+    insertafter: EOF
+  become: yes
+
+- name: Update the library cache
+  command: ldconfig
+  become: yes
+

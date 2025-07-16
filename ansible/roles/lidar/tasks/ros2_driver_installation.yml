@@ -1,0 +1,33 @@
+- name: Download the ROS 2 driver for Livox MID-360
+  git:
+    repo: "git@github.com:AlZi-88/livox_sdk2_driver.git"
+    dest: /home/drone/ros2_drone_ws/src/livox_sdk2_driver
+    version: main
+    update: yes
+  become_user: drone
+
+- name: Build the ROS 2 driver for Livox MID-360
+  shell: |
+    source /opt/ros/jazzy/setup.bash
+    source /home/drone/ros2_drone_ws/install/setup.bash
+    colcon build --packages-select livox_sdk2_driver
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/ros2_drone_ws
+  become_user: drone
+
+- name: Install the ROS 2 driver for Livox MID-360 systemd service
+  become: true
+  copy:
+    src: /home/drone/ros2_drone_ws/src/livox_sdk2_driver/service/livox_sdk2_driver.service
+    dest: /etc/systemd/system/livox_sdk2_driver.service
+    remote_src: true
+    mode: '0644'
+
+- name: Reload systemd and enable driver service
+  become: true
+  systemd:
+    name: livox_sdk2_driver.service
+    daemon_reload: yes
+    enabled: yes
+    state: started
