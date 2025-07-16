@@ -23,11 +23,26 @@
   delay: 5
   until: git_result is succeeded
 
-- name: Clean and build libcamera (manuell wipe)
+
+- name: Wait for any meson process to finish
   shell: |
-    rm -rf build
-    meson setup build
-    ninja -C build
+    while pgrep -f "meson.*libcamera" >/dev/null; do sleep 1; done
+  args:
+    executable: /bin/bash
+
+- name: Ensure libcamera build folder is removed
+  file:
+    path: /home/drone/Dev/libcamera/build
+    state: absent
+
+- name: Setup libcamera with meson
+  shell: meson setup build
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/Dev/libcamera
+
+- name: Build libcamera with ninja
+  shell: ninja -C build
   args:
     executable: /bin/bash
     chdir: /home/drone/Dev/libcamera
