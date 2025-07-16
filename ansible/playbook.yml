@@ -88,7 +88,7 @@
         tasks_from: libcamera
 
 - name: Install Camera libraries - ROS2 Driver
-  hosts: [compi, campi]
+  hosts: [campi, compi]
   serial: 1
   tasks:
     - import_role:
