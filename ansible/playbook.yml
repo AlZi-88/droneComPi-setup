@@ -89,6 +89,7 @@
 
 - name: Install Camera libraries - ROS2 Driver
   hosts: [compi, campi]
+  serial: 1
   tasks:
     - import_role:
         name: camera
@@ -116,6 +117,7 @@
 
 - name: Reload systemd and enable driver service
   hosts: [compi campi]
+  serial: 1
   become: true
   tasks:
     - systemd:
