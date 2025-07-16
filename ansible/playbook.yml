@@ -102,6 +102,7 @@
     - copy:
         src: /home/drone/ros2_drone_ws/src/libcamera_node/service/libcamera_node_compi.service
         dest: /etc/systemd/system/libcamera_node.service
+        remote_src: true
         mode: '0644'
 
 - name: Install the ROS 2 driver for Libcamera systemd service on campi
@@ -111,6 +112,7 @@
     - copy:
         src: /home/drone/ros2_drone_ws/src/libcamera_node/service/libcamera_node_campi.service
         dest: /etc/systemd/system/libcamera_node.service
+        remote_src: true
         mode: '0644'
 
 - name: Reload systemd and enable driver service
