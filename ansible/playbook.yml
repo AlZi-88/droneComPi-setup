@@ -107,6 +107,18 @@
           mode: '0644'
       delegate_to: compi
 
+- name: Install the ROS 2 driver for Libcamera systemd service on compi a second time
+  hosts: compi
+  become: yes
+  tasks:
+    - name: Copy compi systemd service file a second time
+      copy:
+          src: /home/drone/ros2_drone_ws/src/libcamera_node/service/libcamera_node_compi.service
+          dest: /etc/systemd/system/libcamera_node.service
+          remote_src: true
+          mode: '0644'
+      delegate_to: compi
+
 - name: Install the ROS 2 driver for Libcamera systemd service on campi
   hosts: campi
   become: yes
