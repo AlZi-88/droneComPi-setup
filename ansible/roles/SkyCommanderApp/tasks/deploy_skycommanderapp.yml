@@ -25,7 +25,7 @@
     - name: Create .env file with accepted ip-address from .env.template
       become_user: drone
       copy:
-        src: "{{ app_dir }}/frontend/.env.template"
+        src: "{{ app_dir }}/frontend/.env.example"
         dest: "{{ app_dir }}/frontend/.env"
         mode: '0644'
 
