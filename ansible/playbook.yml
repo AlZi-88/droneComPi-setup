@@ -1,14 +1,16 @@
 - name: Setup base system
   hosts: all
   become: true
+  serial: 1
   tasks:
     - import_role:
         name: base
         tasks_from: setup_base
 
 - name: Setup Ethernet communication
-  hosts: [compi campi]
+  hosts: all
   become: yes
+  serial: 1
   tasks:
     - import_role:
         name: base
@@ -17,6 +19,7 @@
 - name: Setup SSH
   hosts: all
   become: yes
+  serial: 1
   tasks:
     - import_role:
         name: base
@@ -25,6 +28,7 @@
 - name: Install ROS2
   hosts: all
   become: yes
+  serial: 1
   tasks:
     - import_role:
         name: ros2
@@ -37,8 +41,8 @@
 #        name: ros2
 #        tasks_from: ros2_demos
 
-- name: Setup samba share on compi
-  hosts: compi
+- name: Setup samba share on campi
+  hosts: campi
   become: yes
   tasks:
     - import_role:
@@ -72,15 +76,16 @@
         tasks_from: ros2_driver_installation
 
 - name: Install Camera libraries - General
-  hosts: [compi, campi]
+  hosts: all
   become: yes
+  serial: 1
   tasks:
     - import_role:
         name: camera
         tasks_from: general
 
 - name: Install Camera libraries - Install Libraries
-  hosts: [compi, campi]
+  hosts: all
   serial: 1
   tasks:
     - import_role:
@@ -88,7 +93,7 @@
         tasks_from: libcamera
 
 - name: Install Camera libraries - ROS2 Driver
-  hosts: [campi, compi]
+  hosts: all
   serial: 1
   tasks:
     - import_role:
@@ -132,7 +137,7 @@
       delegate_to: compi
 
 - name: Reload systemd and enable driver service
-  hosts: [compi campi]
+  hosts: all
   serial: 1
   become: yes
   tasks:
@@ -143,7 +148,7 @@
         state: started
 
 - name: Build SkyCommanderBackend
-  hosts: compi
+  hosts: campi
   become: no
   tasks:
     - import_role:
@@ -151,7 +156,7 @@
         tasks_from: build_skycommanderbackend
 
 - name: Install and Configure Docker
-  hosts: compi
+  hosts: campi
   become: yes
   tasks:
     - import_role:
@@ -159,7 +164,7 @@
         tasks_from: docker
 
 - name: Install SkyCommanderApp
-  hosts: compi
+  hosts: campi
   roles:
     - SkyCommanderApp
 
