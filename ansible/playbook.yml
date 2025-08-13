@@ -49,7 +49,16 @@
         name: base
         tasks_from: samba
 
-- name: Add PX4 Repositories to ROS 2 Workspace
+- name: Install PX4 Interfaces
+  hosts: all
+  serial: 1
+  become_user: drone
+  tasks:
+    - import_role:
+        name: px4
+        tasks_from: install_interfaces
+
+- name: Install PX4 ROS 2 Bridge
   hosts: compi
   roles:
     - px4

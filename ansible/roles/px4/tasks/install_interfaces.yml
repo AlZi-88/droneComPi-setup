@@ -1,0 +1,16 @@
+- name: Clone PX4 msg definitions (px4_msgs)
+  git:
+    repo: 'https://github.com/PX4/px4_msgs.git'
+    dest: /home/drone/ros2_drone_ws/src/px4_msgs
+    version: main
+    update: no
+    force: no
+    clone: yes
+
+- name: Build the px4 message definitions
+  shell: |
+    source /opt/ros/jazzy/setup.bash
+    colcon build --packages-select px4_msgs
+  args:
+    executable: /bin/bash
+    chdir: /home/drone/ros2_drone_ws/

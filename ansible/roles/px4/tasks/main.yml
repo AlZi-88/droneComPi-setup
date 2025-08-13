@@ -43,46 +43,6 @@
     state: present
   become: yes
 
-- name: Clone PX4 ROS 2 Bridge (px4_ros_com)
-  git:
-    repo: 'https://github.com/PX4/px4_ros_com.git'
-    dest: /home/drone/ros2_drone_ws/src/px4_ros_com
-    version: main
-    update: no
-    force: no
-    clone: yes
-  become_user: drone
-
-- name: Clone PX4 msg definitions (px4_msgs)
-  git:
-    repo: 'https://github.com/PX4/px4_msgs.git'
-    dest: /home/drone/ros2_drone_ws/src/px4_msgs
-    version: main
-    update: no
-    force: no
-    clone: yes
-  become_user: drone
-
-- name: Build the px4 message definitions
-  shell: |
-    source /opt/ros/jazzy/setup.bash
-    colcon build --packages-select px4_msgs
-  args:
-    executable: /bin/bash
-    chdir: /home/drone/ros2_drone_ws/
-  become_user: drone
-
-- name: Build px4_ros_com package
-  shell: |
-    source /opt/ros/jazzy/setup.bash
-    source /home/drone/ros2_drone_ws/install/setup.bash
-    colcon build --packages-select px4_ros_com
-  args:
-    executable: /bin/bash
-    chdir: /home/drone/ros2_drone_ws
-  become: false
-  become_user: drone
-
 - name: Clone PX4 ROS 2 Bridge
   git:
     repo: 'https://github.com/eProsima/Micro-XRCE-DDS-Agent.git'
